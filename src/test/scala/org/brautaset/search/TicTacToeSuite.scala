@@ -49,4 +49,14 @@ class TicTacToeSuite extends FunSuite {
     }
   }
 
+  test("fitness") {
+    new TTT {
+      assert(ttt.fitness === 0)
+
+      val s1 = ttt.successor(Slot(0, 0))
+//      assert(s1.fitness === -3)
+    }
+  }
+
+
 }

@@ -51,7 +51,12 @@ class TicTacToe(grid: Vector[Vector[Piece]], current: Piece) extends State {
     case _ => throw new Exception("Expected a Slot!")
   }
 
-  def fitness = 0
+  def fitness = {
+    def fit(p: Piece) = {
+      0
+    }
+    fit(current) - fit(current.opponent)
+  }
 
   override def toString = grid.map(_.mkString("")).mkString("\n")
 
