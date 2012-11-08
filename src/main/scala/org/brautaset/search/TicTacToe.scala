@@ -37,8 +37,8 @@ class TicTacToe(grid: Vector[Vector[Piece]], current: Piece) extends State {
 
   def legalMoves = {
     for {
-      x <- 0 to grid.length
-      y <- 0 to grid(0).length
+      x <- 0 until grid.length
+      y <- 0 until grid(0).length
       if (grid(x)(y).isFree)
     } yield Slot(x, y)
   }.toList

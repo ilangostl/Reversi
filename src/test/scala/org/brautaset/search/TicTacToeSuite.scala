@@ -11,30 +11,42 @@ import org.scalatest.FunSuite
  */
 class TicTacToeSuite extends FunSuite {
 
-  test("toString - at initial position") {
-    val expect = """|---
-                    |---
-                    |---""".stripMargin
-    assert(expect === TicTacToe(Cross).toString)
-    assert(expect === TicTacToe(Circle).toString)
+  trait TTT {
+    val ttt = TicTacToe(Cross)
   }
 
-  test("toString - after a move") {
-    val expect =
-      """|x--
-         |---
-         |---""".stripMargin
 
-    val s1 = TicTacToe(Cross).successor(Slot(0,0))
-    assert(expect === s1.toString)
+  test("toString") {
+    new TTT {
+      val expect = List("---", "---", "---").mkString("\n")
+      assert(expect === ttt.toString)
+    }
+  }
 
-    val expect2 =
-      """|x--
-         |---
-         |--o""".stripMargin
+  test("successor") {
+    new TTT {
+      val expect = List("x--", "---", "---").mkString("\n")
 
-    val s2 = s1.successor(Slot(2,2))
-    assert(expect2 === s2.toString)
+      val s1 = ttt.successor(Slot(0, 0))
+      assert(expect === s1.toString)
+
+      val expect2 = List("x--", "---", "--o").mkString("\n")
+
+      val s2 = s1.successor(Slot(2, 2))
+      assert(expect2 === s2.toString)
+    }
+  }
+
+  test("legalMoves") {
+    new TTT {
+      val expect = {
+        for {
+          x <- 0 to 2
+          y <- 0 to 2
+        } yield Slot(x, y)
+      }.toList
+      assert(expect === ttt.legalMoves)
+    }
   }
 
 }
