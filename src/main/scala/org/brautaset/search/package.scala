@@ -13,7 +13,7 @@ package object search {
 
   trait State {
 
-    def legalMoves: List[Move]
+    def legalMoves: Set[Move]
 
     def successor(move: Move): State
 

@@ -19,7 +19,7 @@ class NegaMax {
     val groups = state.legalMoves.groupBy(m => negamax(state.successor(m), ply - 1))
     val max = groups.keys.max
     println(groups + " => " + max)
-    groups(max)
+    groups(max).toList
   }
 
 }

@@ -19,7 +19,7 @@ class TicTacToeSuite extends FunSuite {
   test("toString") {
     new TTT {
       val expect = List("---", "---", "---").mkString("\n")
-      assert(expect === ttt.toString)
+      assert(ttt.toString === expect)
     }
   }
 
@@ -28,12 +28,12 @@ class TicTacToeSuite extends FunSuite {
       val expect = List("x--", "---", "---").mkString("\n")
 
       val s1 = ttt.successor(Slot(0, 0))
-      assert(expect === s1.toString)
+      assert(s1.toString === expect)
 
       val expect2 = List("x--", "---", "--o").mkString("\n")
 
       val s2 = s1.successor(Slot(2, 2))
-      assert(expect2 === s2.toString)
+      assert(s2.toString === expect2)
     }
   }
 
@@ -44,7 +44,7 @@ class TicTacToeSuite extends FunSuite {
           x <- 0 to 2
           y <- 0 to 2
         } yield Slot(x, y)
-      }.toList
+      }.toSet
       assert(expect === ttt.legalMoves)
     }
   }
