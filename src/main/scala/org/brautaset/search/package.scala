@@ -11,11 +11,11 @@ package object search {
 
   trait Move
 
-  trait State {
+  trait State[T <: Move] {
 
-    def legalMoves: Set[Move]
+    def legalMoves: Set[T]
 
-    def successor(move: Move): State
+    def successor(move: T): State[T]
 
     def fitness: Int
 
@@ -25,7 +25,7 @@ package object search {
 
   trait Search {
 
-    def search(state: State, ply: Int): List[Move]
+//    def search(state: State[T], ply: Int): List[T]
 
   }
 

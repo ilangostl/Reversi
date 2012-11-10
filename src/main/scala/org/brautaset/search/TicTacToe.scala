@@ -32,17 +32,15 @@ object Empty extends Piece {
   override def isFree = true
 }
 
-case class Slot(x: Int, y: Int) extends Move
+case class Point(x: Int, y: Int) extends Move
 
-class TicTacToe(grid: Map[Slot, Piece], current: Piece) extends State {
+class TicTacToe(grid: Map[Point, Piece], current: Piece) extends State[Point] {
 
-  def legalMoves: Set[Move] =
-      grid.filter(_._2.isFree).keys.toSet
+  def legalMoves =
+    grid.filter(_._2.isFree).keySet
 
-  def successor(move: Move): TicTacToe = {
-      val newGrid = grid.updated(move.asInstanceOf[Slot], current)
-      new TicTacToe(newGrid, current.opponent)
-  }
+  def successor(move: Point) =
+    new TicTacToe(grid.updated(move, current), current.opponent)
 
   def fitness = {
     def fit(p: Piece) = {
@@ -52,8 +50,9 @@ class TicTacToe(grid: Map[Slot, Piece], current: Piece) extends State {
   }
 
   override def toString = {
-    (0 to 2).map { x =>
-      (for (y <- 0 to 2) yield grid(Slot(x, y))) mkString
+    (0 to 2).map {
+      x =>
+        (for (y <- 0 to 2) yield grid(Point(x, y))) mkString
     } mkString "\n"
   }
 
@@ -67,7 +66,7 @@ object TicTacToe {
     for {
       x <- 0 to 2
       y <- 0 to 2
-    } yield (Slot(x, y), Empty)
+    } yield (Point(x, y), Empty)
   }.toMap, slot)
 
 }
