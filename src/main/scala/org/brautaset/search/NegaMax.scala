@@ -7,16 +7,15 @@ package org.brautaset.search
  * Time: 08:15
  * To change this template use File | Settings | File Templates.
  */
-/*
-class NegaMax extends Search[M <: Move, S <: State] {
+object NegaMax extends Search[Move] {
 
-  private def negamax(state: S, ply: Int): Int =
+  private def negamax(state: State[Move], ply: Int): Int =
     if (ply <= 0)
       state.fitness
     else
       state.legalMoves.map( m => -negamax(state.successor(m), ply - 1)).max
 
-  def search(state: S, ply: Int) = {
+  def search(state: State[Move], ply: Int) = {
     val groups = state.legalMoves.groupBy(m => negamax(state.successor(m), ply - 1))
     val max = groups.keys.max
     println(groups + " => " + max)
@@ -24,4 +23,3 @@ class NegaMax extends Search[M <: Move, S <: State] {
   }
 
 }
-*/
