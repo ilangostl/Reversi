@@ -54,7 +54,13 @@ class TicTacToeSuite extends FunSuite {
       assert(ttt.fitness === 0)
 
       val s1 = ttt.successor(Point(0, 0))
-//      assert(s1.fitness === -3)
+      assert(s1.fitness === -30)
+
+      val s2 = s1.successor(Point(0, 1))
+      assert(s2.fitness === 10)
+
+      val s3 = s2.successor(Point(1, 0))
+      assert(s3.fitness === -110)
     }
   }
 

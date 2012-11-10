@@ -42,11 +42,38 @@ class TicTacToe(grid: Map[Point, Piece], current: Piece) extends State[Point] {
   def successor(move: Point) =
     new TicTacToe(grid.updated(move, current), current.opponent)
 
+  val d = Vector((0 to 2).map(x => Point(x, x)), (0 to 2).map(x => Point(2-x, x)))
+  val h = for (x <- 0 to 2) yield (0 to 2).map(y => Point(x, y))
+  val v = for (x <- 0 to 2) yield (0 to 2).map(y => Point(y, x))
+  val rows = d ++ h ++ v
+
   def fitness = {
-    def fit(p: Piece) = {
-      0
-    }
-    fit(current) - fit(current.opponent)
+    def score(p: Piece) =
+      if (p.isFree) 0
+      else if (p == current) 1
+      else -1
+
+    // Vector of all 8 rows and their pieces
+    val f = rows.map(_.map(p => grid(p)))
+
+    // Ignore any row that contains both player and opponent pieces
+    val f1 = f.filterNot(r => r.contains(current) && r.contains(current.opponent))
+
+    // Map player to +1 and opponent to -1 and sum their score in each row
+    val g = f1.map(_.map(p => score(p)).sum)
+
+    // Discard rows with no score
+    val h = g.filterNot(_ == 0)
+
+    // partition player / opponent scores
+    val (i, j) = h.partition(_ > 0)
+
+    // Calculate individual player scores
+    val p = i.map(math.pow(10, _)).sum.toInt
+    val o = j.map(x => math.pow(10, -x)).sum.toInt
+
+    // Calculate overall fitness
+    p - o
   }
 
   override def toString = {
