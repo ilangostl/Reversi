@@ -23,9 +23,9 @@ package object search {
 
   }
 
-  trait Search {
+  trait Search[M <: Move] {
 
-//    def search(state: State[T], ply: Int): List[T]
+    def search(state: State[M], ply: Int): M
 
   }
 
