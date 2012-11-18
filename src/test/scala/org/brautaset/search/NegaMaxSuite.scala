@@ -40,9 +40,22 @@ class NegaMaxSuite extends FunSuite {
 
   test("search ply 9 terminates.. slowly") {
     new TestData {
-      val m = s.search(ttt, 9)
-    }
 
+      val m = s.search(ttt, 9)
+      println(ttt + " => " + m)
+
+
+      val t1 = ttt.successor(m)
+      println(t1)
+
+      val m1 = s.search(t1, 9)
+      println(t1 + " => " + m1)
+
+      val t2 = t1.successor(m1)
+      val m2 = s.search(t2, 9)
+      println(t2 + " => " + m2)
+
+    }
   }
 
 

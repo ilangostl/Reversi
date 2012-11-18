@@ -10,7 +10,7 @@ package org.brautaset.search
 trait NegaMax extends Search {
 
   private def negamax(state: State[M], ply: Int): Int =
-    if (ply <= 0)
+    if (ply <= 0 || state.isLeaf)
       state.fitness
     else
       state.moves.map( m => -negamax(state.successor(m), ply - 1)).max
