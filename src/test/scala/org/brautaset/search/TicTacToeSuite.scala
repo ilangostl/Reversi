@@ -37,7 +37,7 @@ class TicTacToeSuite extends FunSuite {
     }
   }
 
-  test("legalMoves") {
+  test("moves") {
     new TTT {
       val expect = {
         for {
@@ -45,7 +45,7 @@ class TicTacToeSuite extends FunSuite {
           y <- 0 to 2
         } yield Point(x, y)
       }.toSet
-      assert(expect === ttt.legalMoves)
+      assert(expect === ttt.moves)
     }
   }
 

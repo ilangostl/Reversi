@@ -11,19 +11,21 @@ package object search {
 
   trait Move
 
-  trait State[T <: Move] {
+  trait State[M <: Move] {
 
-    def legalMoves: Set[T]
+    def moves: Set[M]
 
-    def successor(move: T): State[T]
+    def successor(move: M): State[M]
 
     def fitness: Int
 
-    lazy val isLeaf = legalMoves.isEmpty
+    lazy val isLeaf = moves.isEmpty
 
   }
 
-  trait Search[M <: Move] {
+  trait Search {
+
+    type M <: Move
 
     def search(state: State[M], ply: Int): M
 

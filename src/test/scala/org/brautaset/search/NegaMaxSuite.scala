@@ -13,12 +13,38 @@ class NegaMaxSuite extends FunSuite {
 
   trait TestData {
     val ttt = TicTacToe.apply
+    val s = new NegaMax {
+        type M = Point
+    }
+  }
+
+  test("search ply 0 throws") {
+    new TestData {
+      intercept[IllegalArgumentException] {
+        s.search(ttt, 0)
+      }
+    }
   }
 
   test("search ply 1 terminates") {
     new TestData {
-      val m = NegaMax.search(ttt, 0)
+      val m = s.search(ttt, 1)
     }
   }
+
+  test("search ply 2 terminates") {
+    new TestData {
+      val m = s.search(ttt, 2)
+    }
+  }
+
+  test("search ply 9 terminates.. slowly") {
+    new TestData {
+      val m = s.search(ttt, 9)
+    }
+
+  }
+
+
 
 }

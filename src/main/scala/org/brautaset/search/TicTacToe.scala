@@ -36,7 +36,7 @@ case class Point(x: Int, y: Int) extends Move
 
 class TicTacToe(grid: Map[Point, Piece], current: Piece) extends State[Point] {
 
-  def legalMoves =
+  def moves =
     grid.filter(_._2.isFree).keySet
 
   def successor(move: Point) =
