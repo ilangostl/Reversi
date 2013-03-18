@@ -5,26 +5,34 @@ import org.scalatest.matchers.MustMatchers
 
 class BoardSpec extends WordSpec with MustMatchers {
 
-  val locations = Map(Location('e', 4) -> X)
+  val locations = Map(Location(5, 4) -> X)
 
-  "Board" should {
+  "A Board" should {
 
     "instantiate without arguments" in {
-      val r = Board()
-      r.currentPlayer must be (Board.firstPlayer)
-      r.currentBoard must be (Board.initialLocations)
+      val b = Board()
+      b.playerTurn must be (X)
+      b.grid must be (Board.initialGrid)
     }
 
-    "instantiate with player" in {
-      val r = Board(O)
-      r.currentPlayer must be (O)
-      r.currentBoard must be (Board.initialLocations)
-    }
-
-    "instantiate with player & board" in {
+    "instantiate with player & grid" in {
       val r = Board(O, Map.empty[Location,Player])
-      r.currentPlayer must be (O)
-      r.currentBoard must be (Map())
+      r.playerTurn must be (O)
+      r.grid must be (Map())
+    }
+
+    "find correct number of neighbours for initial grid" in {
+      Board().neighboursOfOccupiedLocations must have size (12)
+    }
+
+    "not return neighbours outside the board" in {
+      val b = Board(X, Map(Location(0, 6) -> X, Location(0, 7) -> O))
+      b.neighboursOfOccupiedLocations must be(Set(Location(0, 5), Location(1, 5), Location(1, 6), Location(1, 7)))
+    }
+
+    "return no neighbours for unpopulated grid" in {
+      val b = Board(X, Map.empty[Location,Player])
+      b.neighboursOfOccupiedLocations must be (Set())
     }
 
   }

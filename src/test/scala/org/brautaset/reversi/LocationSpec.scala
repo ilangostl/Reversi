@@ -5,19 +5,21 @@ import org.scalatest.WordSpec
 
 class LocationSpec extends WordSpec with MustMatchers {
 
-  "Locations" should {
+  "A Location's neighbours" should {
 
-    "know who their neighbours are" in {
-      Location('a',0).neighbours must be(Set(Location('b',0), Location('b', 1), Location('a', 1)))
+    "always be 8" in {
+      Location('a',0).neighbours must have size (8)
     }
 
-    "know the neighbours for a set of locations" in {
-      val input = Set(Location('a', 0), Location('a', 1))
-      Location.neighbours(input) must be(Set(Location('a', 2), Location('b', 0), Location('b', 1), Location('b', 2)))
+    "always be 8 (2)" in {
+      Location('e',5).neighbours must have size (8)
+    }
+
+    "not contain itself" in {
+      val loc = Location('e', 3)
+      loc.neighbours must not contain (loc)
     }
 
   }
-
-
 
 }
