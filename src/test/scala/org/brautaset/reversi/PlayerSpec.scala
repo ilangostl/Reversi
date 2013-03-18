@@ -7,20 +7,17 @@ class PlayerSpec extends WordSpec with MustMatchers {
 
   "A Player" should {
 
-    "compare equal to itself" in {
-      X must be (X)
+    "know its opponent" in {
+      X.opponent must be (O)
     }
 
-    "compare not equal to itself" in {
-      X must not be (O)
+    "know its opponent (2)" in {
+      O.opponent must be (X)
     }
 
-    "know the opponent of X is O" in {
-      Player.opponent(X) must be (O)
+    "know that its opponent's opponent is itself" in {
+      O.opponent.opponent must be (O)
     }
 
-    "know the opponent of O is X" in {
-      Player.opponent(O) must be (X)
-    }
   }
 }
