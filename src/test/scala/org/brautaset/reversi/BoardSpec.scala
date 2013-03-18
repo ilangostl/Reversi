@@ -5,8 +5,6 @@ import org.scalatest.matchers.MustMatchers
 
 class BoardSpec extends WordSpec with MustMatchers {
 
-  val locations = Map(Location(5, 4) -> X)
-
   "A Board's constructor" should {
 
     "use defaults when invoked with no arguments" in {
@@ -24,18 +22,32 @@ class BoardSpec extends WordSpec with MustMatchers {
 
   "A Board" should {
 
-    "find correct number of neighbours for initial grid" in {
-      Board().neighboursOfOccupiedLocations must have size (12)
+    "know locations held by opponent" in {
+      val board = Board()
+      board.locationsHeldByOpponent must have size (2)
+      board.locationsHeldByOpponent must be (Set(Location(3, 4), Location(4, 3)))
     }
 
-    "not return neighbours outside the board" in {
+    "know unoccupied neighbours for locations held by opponent" in {
+      val unoccupiedNeighbours = Set(
+        Location(2,3), Location(2,4), Location(2,5),
+        Location(3,2), Location(3,5),
+        Location(4,2), Location(4,5),
+        Location(5,2), Location(5,3), Location(5,4))
+
+      val board = Board()
+      board.unoccupiedNeighboursToOpponent must have size (unoccupiedNeighbours.size)
+      board.unoccupiedNeighboursToOpponent must be (unoccupiedNeighbours)
+    }
+
+    "not return unoccupied neighbour locations outside the board" in {
       val b = Board(X, Map(Location(0, 6) -> X, Location(0, 7) -> O))
-      b.neighboursOfOccupiedLocations must be(Set(Location(0, 5), Location(1, 5), Location(1, 6), Location(1, 7)))
+      b.unoccupiedNeighboursToOpponent must be(Set(Location(1, 6), Location(1, 7)))
     }
 
     "return no neighbours for unpopulated grid" in {
       val b = Board(X, Map.empty[Location,Player])
-      b.neighboursOfOccupiedLocations must be (Set())
+      b.unoccupiedNeighboursToOpponent must be (Set())
     }
 
   }

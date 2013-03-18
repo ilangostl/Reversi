@@ -6,10 +6,10 @@ object Board {
   val rows = 8
 
   val initialGrid = Map(
-    Location(4, 4) -> X,
-    Location(4, 5) -> O,
-    Location(5, 4) -> O,
-    Location(5, 5) -> X)
+    Location(3, 3) -> X,
+    Location(3, 4) -> O,
+    Location(4, 3) -> O,
+    Location(4, 4) -> X)
 
   def apply(): Board =
     Board(X, initialGrid)
@@ -23,9 +23,12 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
 
   import Board._
 
-  def neighboursOfOccupiedLocations = {
-    val occupiedLocations = grid.keySet
-    (occupiedLocations.flatMap(_.neighbours) -- occupiedLocations).filter(isOnBoard(_))
-  }
+  lazy val occupiedlocations = grid.keySet
+
+  lazy val locationsHeldByOpponent =
+    grid.filterNot(_._2 == playerTurn).keySet
+
+  lazy val unoccupiedNeighboursToOpponent =
+    locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedlocations
 
 }
