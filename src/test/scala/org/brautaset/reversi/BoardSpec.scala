@@ -7,19 +7,22 @@ class BoardSpec extends WordSpec with MustMatchers {
 
   val locations = Map(Location(5, 4) -> X)
 
-  "A Board" should {
+  "A Board's constructor" should {
 
-    "instantiate without arguments" in {
+    "use defaults when invoked with no arguments" in {
       val b = Board()
       b.playerTurn must be (X)
       b.grid must be (Board.initialGrid)
     }
 
-    "instantiate with player & grid" in {
+    "accept player & grid" in {
       val r = Board(O, Map.empty[Location,Player])
       r.playerTurn must be (O)
       r.grid must be (Map())
     }
+  }
+
+  "A Board" should {
 
     "find correct number of neighbours for initial grid" in {
       Board().neighboursOfOccupiedLocations must have size (12)
