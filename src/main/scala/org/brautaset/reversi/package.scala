@@ -2,20 +2,27 @@ package org.brautaset
 
 package object reversi {
 
-  val nOfColumns = 8
-  val nOfRows = 8
+  val columns = 8
+  val rows = 8
 
   case class Location(column: Int, row: Int) {
     def moveBy(dx: Int, dy: Int) = copy(column + dx, row + dy)
+
+    lazy val isOnBoard =
+      column >= 0 && column < columns && row >= 0 && row < rows
+
+    def neighbours: Set[Location] = {
+      val neighbours = for {
+        c <- -1 to 1
+        r <- -1 to 1
+      } yield moveBy(c, r)
+      neighbours.filter(_.isOnBoard).toSet - this
+    }
+
   }
 
   object Location {
     def apply(column: Char, row: Int) = new Location(column - 'a', row)
-    def isOnBoard(location: Location) =
-      location.column >= 0 &&
-        location.column < nOfColumns &&
-        location.row >= 0 &&
-        location.row < nOfRows
   }
 
   sealed trait Player

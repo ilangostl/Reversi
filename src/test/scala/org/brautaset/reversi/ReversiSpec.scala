@@ -7,19 +7,17 @@ class ReversiSpec extends WordSpec with MustMatchers {
 
   import Reversi._
 
-  "Player X" should {
+  "A Player" should {
 
-    "be the starting player" in {
+    "know the starting player" in {
       Player.first must be (X)
     }
 
-    "know its opponent is O" in {
+    "know the opponent of X is O" in {
       Player.opponent(X) must be (O)
     }
-  }
 
-  "Player O" should {
-    "know its opponent is X" in {
+    "know the opponent of O is X" in {
       Player.opponent(O) must be (X)
     }
   }
@@ -52,10 +50,10 @@ class ReversiSpec extends WordSpec with MustMatchers {
 
   }
 
-  "A location" should {
+  "A Location" should {
 
     "know who its neighbours are" in {
-      Reversi.neighbours(Location('a',0)) must be(Set(Location('b',0), Location('b', 1), Location('a', 1)))
+      Location('a',0).neighbours must be(Set(Location('b',0), Location('b', 1), Location('a', 1)))
     }
 
   }

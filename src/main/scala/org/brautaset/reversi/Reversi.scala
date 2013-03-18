@@ -20,15 +20,6 @@ object Reversi {
   def apply(): Reversi =
     Reversi(Player.first, initialBoard)
 
-  def neighbours(location: Location): Set[Location] = {
-    val neighbours = for {
-      c <- -1 to 1
-      r <- -1 to 1
-    } yield location.moveBy(c, r)
-
-    neighbours.filter(Location.isOnBoard(_)).toSet - location
-  }
-
 }
 
 class Reversi(initialPlayer: Player, initialBoard: Board) {
