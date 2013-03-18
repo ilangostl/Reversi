@@ -23,6 +23,9 @@ package object reversi {
 
   object Location {
     def apply(column: Char, row: Int) = new Location(column - 'a', row)
+
+    def neighbours(locations: Set[Location]) =
+      locations.flatMap(_.neighbours) -- locations
   }
 
   sealed trait Player
