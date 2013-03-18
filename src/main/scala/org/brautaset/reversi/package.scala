@@ -2,10 +2,9 @@ package org.brautaset
 
 package object reversi {
 
-  val columns = 8
-  val rows = 8
-
   case class Location(column: Int, row: Int) {
+    import Location._
+
     def moveBy(dx: Int, dy: Int) = copy(column + dx, row + dy)
 
     lazy val isOnBoard =
@@ -22,6 +21,9 @@ package object reversi {
   }
 
   object Location {
+    val columns = 8
+    val rows = 8
+
     def apply(column: Char, row: Int) = new Location(column - 'a', row)
 
     def neighbours(locations: Set[Location]) =
