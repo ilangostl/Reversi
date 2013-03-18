@@ -52,4 +52,12 @@ class ReversiSpec extends WordSpec with MustMatchers {
 
   }
 
+  "A location" should {
+
+    "know who its neighbours are" in {
+      Reversi.neighbours(Location('a',0)) must be(Set(Location('b',0), Location('b', 1), Location('a', 1)))
+    }
+
+  }
+
 }
