@@ -1,6 +1,6 @@
 package org.brautaset.reversi
 
-sealed trait Player {
+abstract sealed trait Player {
   def opponent = Player.opponent(this)
 }
 

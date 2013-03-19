@@ -34,39 +34,35 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
   def unoccupiedNeighboursToLocationsHeldByOpponent =
     locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedlocations
 
+  private def flippedLocations(loc: Location, d: Direction) = {
+    @tailrec
+    def iter(l: Location, flipped: List[Location]): List[Location] =
+      if (locationsHeldByOpponent.contains(l))
+        iter(l.moveBy(d), l :: flipped)
+      else if (occupiedlocations.contains(l))
+        flipped
+      else
+        Nil
+
+    // we must skip over at least one of opponent's pieces to be legal move
+    val next = loc.moveBy(d)
+    if (locationsHeldByOpponent.contains(next))
+      iter(next.moveBy(d), next :: Nil)
+    else
+      Nil
+  }
+
   def isLegalMove(location: Location) =
-    !flippedLocations(location).isEmpty
+    Location.directions.find(!flippedLocations(location, _).isEmpty).isDefined
 
   def legalMoves =
     unoccupiedNeighboursToLocationsHeldByOpponent.filter(isLegalMove(_))
 
-  def flippedLocations(location: Location) = {
-    def flippedLocationDirection(d: Direction) = {
+  def locationsFlippedByMove(location: Location) =
+    Location.directions.flatMap(flippedLocations(location, _))
 
-      @tailrec
-      def iter(l: Location, flipped: List[Location]): List[Location] =
-        if (locationsHeldByOpponent.contains(l))
-          iter(l.moveBy(d), l :: flipped)
-        else if (occupiedlocations.contains(l))
-          flipped
-        else
-          Nil
-
-      // we must skip over at least one of opponent's pieces to be legal move
-      val next = location.moveBy(d)
-      if (locationsHeldByOpponent.contains(next))
-        iter(next.moveBy(d), next :: Nil)
-      else
-        Nil
-    }
-
-    Location.directions.flatMap(flippedLocationDirection(_))
-  }
-
-  def successor(move: Location) = {
-    val gd = (flippedLocations(move) + move).map(x => (x, playerTurn)).toMap
-    Board(playerTurn.opponent, grid ++ gd)
-  }
+  def successor(move: Location) =
+    Board(playerTurn.opponent, grid ++ (locationsFlippedByMove(move) + move).map((_, playerTurn)))
 
   override def toString = {
     def line(r: Int) =
