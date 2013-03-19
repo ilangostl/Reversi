@@ -44,18 +44,18 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
         occupiedlocations.contains(l)
 
     @tailrec
-    def outer(loc: Location, d: List[Direction]): Boolean =
+    def outer(d: List[Direction]): Boolean =
       if (d.isEmpty)
         false
       else {
-        val next = loc.moveBy(d.head)
+        val next = location.moveBy(d.head)
         if (locationsHeldByOpponent.contains(next) && inner(next, d.head))
           true
         else
-          outer(loc, d.tail)
+          outer(d.tail)
       }
 
-    outer(location, Location.directions.toList)
+    outer(Location.directions.toList)
   }
 
   lazy val legalMoves =
