@@ -36,24 +36,31 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
 
   def isLegalMove(location: Location): Boolean = {
 
-    @tailrec
-    def inner(l: Location, d: Direction): Boolean =
-      if (locationsHeldByOpponent.contains(l))
-        inner(l.moveBy(d), d)
+    def inner(d: Direction): Boolean = {
+
+      @tailrec
+      def inner0(l: Location): Boolean =
+       if (locationsHeldByOpponent.contains(l))
+          inner0(l.moveBy(d))
+        else
+          occupiedlocations.contains(l)
+
+      // we must skip over at least one of opponent's pieces to be legal move
+      val next = location.moveBy(d)
+      if (locationsHeldByOpponent.contains(next))
+        inner0(next.moveBy(d))
       else
-        occupiedlocations.contains(l)
+        false
+    }
 
     @tailrec
-    def outer(d: List[Direction]): Boolean =
-      if (d.isEmpty)
+    def outer(dirs: List[Direction]): Boolean =
+      if (dirs.isEmpty)
         false
-      else {
-        val next = location.moveBy(d.head)
-        if (locationsHeldByOpponent.contains(next) && inner(next, d.head))
-          true
-        else
-          outer(d.tail)
-      }
+      else if (inner(dirs.head))
+        true
+      else
+        outer(dirs.tail)
 
     outer(Location.directions.toList)
   }

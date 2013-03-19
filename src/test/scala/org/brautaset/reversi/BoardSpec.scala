@@ -40,14 +40,6 @@ class BoardSpec extends WordSpec with MustMatchers {
       board.unoccupiedNeighboursToOpponent must be (unoccupiedNeighbours)
     }
 
-    "knows that [5,3] is a legal move" in {
-      Board().isLegalMove(Location(5, 3)) must be (true)
-    }
-
-    "know the legal moves" in {
-      Board().legalMoves must be (Set(Location(3,5), Location(4,2), Location(2,4), Location(5,3)))
-    }
-
     "not return unoccupied neighbour locations outside the board" in {
       val b = Board(X, Map(Location(0, 6) -> X, Location(0, 7) -> O))
       b.unoccupiedNeighboursToOpponent must be(Set(Location(1, 6), Location(1, 7)))
@@ -56,6 +48,14 @@ class BoardSpec extends WordSpec with MustMatchers {
     "return no neighbours for unpopulated grid" in {
       val b = Board(X, Map.empty[Location,Player])
       b.unoccupiedNeighboursToOpponent must be (Set())
+    }
+
+    "knows that [5,3] is a legal move" in {
+      Board().isLegalMove(Location(5, 3)) must be (true)
+    }
+
+    "know the legal moves" in {
+      Board().legalMoves must be (Set(Location(3,5), Location(4,2), Location(2,4), Location(5,3)))
     }
 
   }
