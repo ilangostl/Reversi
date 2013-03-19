@@ -31,7 +31,7 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
   lazy val locationsHeldByOpponent =
     grid.filterNot(_._2 == playerTurn).keySet
 
-  lazy val unoccupiedNeighboursToOpponent =
+  lazy val unoccupiedNeighboursToLocationsHeldByOpponent =
     locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedlocations
 
   def isLegalMove(location: Location): Boolean = {
@@ -66,6 +66,6 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
   }
 
   lazy val legalMoves =
-    unoccupiedNeighboursToOpponent.filter(isLegalMove(_))
+    unoccupiedNeighboursToLocationsHeldByOpponent.filter(isLegalMove(_))
 
 }
