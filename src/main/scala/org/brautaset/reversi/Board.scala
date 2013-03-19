@@ -68,5 +68,19 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
     Board(playerTurn.opponent, grid ++ gd)
   }
 
+  override def toString = {
+    def line(r: Int) =
+      r +: (0 until columns).map {
+        c => grid.get(Location(c, r))
+      }.collect {
+        case None => "."
+        case Some(p) => p.toString
+      }
+
+    val head = "/" + (0 until columns).mkString
+    val body = (0 until rows).map(line(_).mkString)
+    val foot = playerTurn.toString + " to move"
+    (head +: body :+ foot).mkString("\n")
+  }
 
 }
