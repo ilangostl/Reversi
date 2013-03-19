@@ -58,6 +58,10 @@ class BoardSpec extends WordSpec with MustMatchers {
       Board().legalMoves must be (Set(Location(3,5), Location(4,2), Location(2,4), Location(5,3)))
     }
 
+    "find flipped locations for a move" in {
+      Board().flippedLocations(Location(5, 3)) must be (Set(Location(4, 3)))
+    }
+
   }
 
 }

@@ -28,7 +28,7 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
 
   def occupiedlocations = grid.keySet
 
-  def locationsHeldByOpponent =
+  lazy val locationsHeldByOpponent =
     grid.filterNot(_._2 == playerTurn).keySet
 
   def unoccupiedNeighboursToLocationsHeldByOpponent =
@@ -58,4 +58,24 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
   def legalMoves =
     unoccupiedNeighboursToLocationsHeldByOpponent.filter(isLegalMove(_))
 
+  def flippedLocations(location: Location) = {
+    def flippedLocationDirection(d: Direction) = {
+
+      @tailrec
+      def iter(l: Location, flipped: List[Location]): Set[Location] =
+        if (locationsHeldByOpponent.contains(l))
+          iter(l.moveBy(d), l :: flipped)
+        else if (occupiedlocations.contains(l))
+          flipped.toSet
+        else Set.empty[Location]
+
+      val next = location.moveBy(d)
+      if (locationsHeldByOpponent.contains(next))
+        iter(next.moveBy(d), next :: Nil)
+      else
+        Set.empty[Location]
+    }
+
+    Location.directions.flatMap(flippedLocationDirection(_))
+  }
 }
