@@ -34,26 +34,8 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
   def unoccupiedNeighboursToLocationsHeldByOpponent =
     locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedlocations
 
-  def isLegalMove(location: Location) = {
-    def isLegalMoveDirection(d: Direction) = {
-
-      @tailrec
-      def iter(l: Location): Boolean =
-       if (locationsHeldByOpponent.contains(l))
-          iter(l.moveBy(d))
-        else
-          occupiedlocations.contains(l)
-
-      // we must skip over at least one of opponent's pieces to be legal move
-      val next = location.moveBy(d)
-      if (locationsHeldByOpponent.contains(next))
-        iter(next.moveBy(d))
-      else
-        false
-    }
-
-    Location.directions.find(isLegalMoveDirection(_)).isDefined
-  }
+  def isLegalMove(location: Location) =
+    !flippedLocations(location).isEmpty
 
   def legalMoves =
     unoccupiedNeighboursToLocationsHeldByOpponent.filter(isLegalMove(_))
@@ -62,18 +44,20 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
     def flippedLocationDirection(d: Direction) = {
 
       @tailrec
-      def iter(l: Location, flipped: List[Location]): Set[Location] =
+      def iter(l: Location, flipped: List[Location]): List[Location] =
         if (locationsHeldByOpponent.contains(l))
           iter(l.moveBy(d), l :: flipped)
         else if (occupiedlocations.contains(l))
-          flipped.toSet
-        else Set.empty[Location]
+          flipped
+        else
+          Nil
 
+      // we must skip over at least one of opponent's pieces to be legal move
       val next = location.moveBy(d)
       if (locationsHeldByOpponent.contains(next))
         iter(next.moveBy(d), next :: Nil)
       else
-        Set.empty[Location]
+        Nil
     }
 
     Location.directions.flatMap(flippedLocationDirection(_))
