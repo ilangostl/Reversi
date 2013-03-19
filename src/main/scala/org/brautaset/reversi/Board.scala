@@ -34,35 +34,25 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
   lazy val unoccupiedNeighboursToLocationsHeldByOpponent =
     locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedlocations
 
-  def isLegalMove(location: Location): Boolean = {
-
-    def inner(d: Direction): Boolean = {
+  def isLegalMove(location: Location) = {
+    def isLegalMoveDirection(d: Direction) = {
 
       @tailrec
-      def inner0(l: Location): Boolean =
+      def iter(l: Location): Boolean =
        if (locationsHeldByOpponent.contains(l))
-          inner0(l.moveBy(d))
+          iter(l.moveBy(d))
         else
           occupiedlocations.contains(l)
 
       // we must skip over at least one of opponent's pieces to be legal move
       val next = location.moveBy(d)
       if (locationsHeldByOpponent.contains(next))
-        inner0(next.moveBy(d))
+        iter(next.moveBy(d))
       else
         false
     }
 
-    @tailrec
-    def outer(dirs: List[Direction]): Boolean =
-      if (dirs.isEmpty)
-        false
-      else if (inner(dirs.head))
-        true
-      else
-        outer(dirs.tail)
-
-    outer(Location.directions.toList)
+    Location.directions.find(isLegalMoveDirection(_)).isDefined
   }
 
   lazy val legalMoves =
