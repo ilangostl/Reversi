@@ -61,6 +61,28 @@ class BoardSpec extends WordSpec with MustMatchers {
     "find flipped locations for a move" in {
       Board().flippedLocations(Location(5, 3)) must be (Set(Location(4, 3)))
     }
+  }
+
+  "A Board's successor" should {
+
+    "update playerTurn" in {
+      Board().successor(Location(5, 3)).playerTurn must be (O)
+    }
+
+    "update grid to occupy 1 more location" in {
+      Board().successor(Location(5, 3)).grid must have size (5)
+    }
+
+    "update grid to occupy move location" in {
+      val loc = Location(5, 3)
+      val grid = Map(
+        Location(3, 3) -> X,
+        Location(3, 4) -> O,
+        Location(4, 3) -> X,
+        Location(4, 4) -> X,
+        Location(5, 3) -> X)
+      Board().successor(loc).grid must be (grid)
+    }
 
   }
 

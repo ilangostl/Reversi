@@ -62,4 +62,11 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
 
     Location.directions.flatMap(flippedLocationDirection(_))
   }
+
+  def successor(move: Location) = {
+    val gd = (flippedLocations(move) + move).map(x => (x, playerTurn)).toMap
+    Board(playerTurn.opponent, grid ++ gd)
+  }
+
+
 }
