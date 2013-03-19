@@ -26,12 +26,12 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
 
   import Board._
 
-  lazy val occupiedlocations = grid.keySet
+  def occupiedlocations = grid.keySet
 
-  lazy val locationsHeldByOpponent =
+  def locationsHeldByOpponent =
     grid.filterNot(_._2 == playerTurn).keySet
 
-  lazy val unoccupiedNeighboursToLocationsHeldByOpponent =
+  def unoccupiedNeighboursToLocationsHeldByOpponent =
     locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedlocations
 
   def isLegalMove(location: Location) = {
@@ -55,7 +55,7 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
     Location.directions.find(isLegalMoveDirection(_)).isDefined
   }
 
-  lazy val legalMoves =
+  def legalMoves =
     unoccupiedNeighboursToLocationsHeldByOpponent.filter(isLegalMove(_))
 
 }
