@@ -98,6 +98,26 @@ class BoardSpec extends WordSpec with MustMatchers {
       Board().successor(loc).grid must be (grid)
     }
 
+    "throw if attempting to make illegal move" in {
+      evaluating {
+        Board().successor(Location(0, 0))
+      } must produce [IllegalArgumentException]
+
+    }
+
+  }
+
+  "A Board's isFinished" should {
+    "start out false" in {
+      Board().isFinished must be (false)
+    }
+
+    "eventually become false" in {
+      def iter(board: Board): Boolean =
+        if (board.isFinished) true
+        else iter(board.successor(board.legalMoves.head))
+      iter(Board()) must be (true)
+    }
   }
 
 }

@@ -62,7 +62,12 @@ case class Board(turn: Piece, grid: Map[Location,Piece]) {
     Location.directions.flatMap(flippedLocations(location, _))
 
   def successor(move: Location) =
-    Board(turn.opponent, grid ++ (locationsFlippedByMove(move) + move).map((_, turn)))
+    if (isLegalMove(move))
+      Board(turn.opponent, grid ++ (locationsFlippedByMove(move) + move).map((_, turn)))
+    else
+      throw new IllegalArgumentException(s"$move is not a legal move @ " + this)
+
+  def isFinished = legalMoves.isEmpty
 
   override def toString = {
     def line(r: Int) =
