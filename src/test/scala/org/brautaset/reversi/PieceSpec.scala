@@ -3,9 +3,9 @@ package org.brautaset.reversi
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.WordSpec
 
-class PlayerSpec extends WordSpec with MustMatchers {
+class PieceSpec extends WordSpec with MustMatchers {
 
-  "A Player" should {
+  "A Piece" should {
 
     "know its opponent" in {
       X.opponent must be (O)

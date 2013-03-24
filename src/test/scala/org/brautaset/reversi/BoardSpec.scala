@@ -9,13 +9,13 @@ class BoardSpec extends WordSpec with MustMatchers {
 
     "use defaults when invoked with no arguments" in {
       val b = Board()
-      b.playerTurn must be (X)
+      b.turn must be (X)
       b.grid must be (Board.initialGrid)
     }
 
     "accept player & grid" in {
-      val r = Board(O, Map.empty[Location,Player])
-      r.playerTurn must be (O)
+      val r = Board(O, Map.empty[Location,Piece])
+      r.turn must be (O)
       r.grid must be (Map())
     }
   }
@@ -60,7 +60,7 @@ class BoardSpec extends WordSpec with MustMatchers {
     }
 
     "return no neighbours for unpopulated grid" in {
-      val b = Board(X, Map.empty[Location,Player])
+      val b = Board(X, Map.empty[Location,Piece])
       b.unoccupiedNeighboursToLocationsHeldByOpponent must be (Set())
     }
 
@@ -79,8 +79,8 @@ class BoardSpec extends WordSpec with MustMatchers {
 
   "A Board's successor" should {
 
-    "update playerTurn" in {
-      Board().successor(Location(5, 3)).playerTurn must be (O)
+    "update turn" in {
+      Board().successor(Location(5, 3)).turn must be (O)
     }
 
     "update grid to occupy 1 more location" in {

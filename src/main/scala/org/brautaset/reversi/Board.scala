@@ -22,14 +22,14 @@ object Board {
 
 }
 
-case class Board(playerTurn: Player, grid: Map[Location,Player]) {
+case class Board(turn: Piece, grid: Map[Location,Piece]) {
 
   import Board._
 
   def occupiedlocations = grid.keySet
 
   lazy val locationsHeldByOpponent =
-    grid.filterNot(_._2 == playerTurn).keySet
+    grid.filterNot(_._2 == turn).keySet
 
   def unoccupiedNeighboursToLocationsHeldByOpponent =
     locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedlocations
@@ -62,7 +62,7 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
     Location.directions.flatMap(flippedLocations(location, _))
 
   def successor(move: Location) =
-    Board(playerTurn.opponent, grid ++ (locationsFlippedByMove(move) + move).map((_, playerTurn)))
+    Board(turn.opponent, grid ++ (locationsFlippedByMove(move) + move).map((_, turn)))
 
   override def toString = {
     def line(r: Int) =
@@ -75,7 +75,7 @@ case class Board(playerTurn: Player, grid: Map[Location,Player]) {
 
     val head = "/" + (0 until columns).mkString
     val body = (0 until rows).map(line(_).mkString)
-    val foot = playerTurn.toString + " to move"
+    val foot = turn.toString + " to move"
     (head +: body :+ foot).mkString("\n")
   }
 
