@@ -69,6 +69,20 @@ case class Board(turn: Piece, grid: Map[Location,Piece]) {
 
   def isFinished = legalMoves.isEmpty
 
+  def winner = {
+    val opponent = turn.opponent
+    val diff = grid.values.collect {
+      case `turn` => 1
+      case `opponent` => -1
+    }.sum
+
+    if (diff == 0)
+      None
+    else
+      Some(if (diff > 0) turn else turn.opponent)
+  }
+
+
   override def toString = {
     def line(r: Int) =
       r +: (0 until columns).map {

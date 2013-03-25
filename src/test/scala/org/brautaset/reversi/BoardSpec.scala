@@ -120,4 +120,22 @@ class BoardSpec extends WordSpec with MustMatchers {
     }
   }
 
+  "winner" should {
+    "return None in case of a draw" in {
+      Board().winner must be (None)
+    }
+
+    "return as winner the side with most tiles" in {
+      Board().successor(Location(5, 3)).winner must be (Some(X))
+    }
+
+    "not be impacted by who's turn it is" in {
+      val board = Board().successor(Location(5, 3))
+      // rewind turn
+      Board(board.turn.opponent, board.grid).winner must be (Some(X))
+    }
+
+
+  }
+
 }
