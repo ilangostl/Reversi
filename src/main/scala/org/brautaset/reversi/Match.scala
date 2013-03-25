@@ -4,8 +4,9 @@ import akka.actor.{ActorLogging, ActorRef, Actor}
 
 object Match {
 
-  case class Start(reportTo: ActorRef)
+  case object Start
   case object Continue
+  case object CheckAndReport
 
   case class ProgressReport(board: Board)
   case class GameOver(board: Board)
@@ -15,39 +16,45 @@ object Match {
 
 }
 
-class Match(p1: ActorRef, p2: ActorRef) extends Actor with ActorLogging {
+class Match(p1: ActorRef, p2: ActorRef, controller: ActorRef) extends Actor with ActorLogging {
 
   import Match._
 
-  var moves = List.empty[Location]
-  var board = Board()
+  val initialBoard = Board()
 
   val turn = Map(
-    board.turn -> p1,
-    board.turn.opponent -> p2)
-
-  var reportTo: Option[ActorRef] = None
+    initialBoard.turn -> p1,
+    initialBoard.turn.opponent -> p2)
 
   def receive = {
-    case Start(starter) =>
-      reportTo = Some(starter)
+    case Start =>
+      context.become(gameOn(initialBoard))
       self ! Continue
+  }
 
+  def gameOn(board: Board): Receive = {
     case Continue =>
-      if (board.isFinished)
-        reportTo.get ! GameOver(board)
-      else {
-        reportTo.get ! ProgressReport(board)
-        turn(board.turn) ! TakeTurn(board)
-      }
+      turn(board.turn) ! TakeTurn(board)
+
+    case CheckAndReport =>
+      if (board.isFinished) {
+        context.become(gameOver(board))
+        controller ! GameOver(board)
+
+      } else
+        controller ! ProgressReport(board)
 
     case MakeMove(location: Location) =>
       log.debug(s"Got move: $location")
+      if (turn(board.turn) != sender)
+        throw new IllegalStateException("Unexpected Sender")
+      context.become(gameOn(board.successor(location)))
+      self ! CheckAndReport
+  }
 
-      moves ::= location
-      board = board.successor(location)
-
-      self ! Continue
+  def gameOver(board: Board): Receive = {
+    case Continue =>
+      controller ! GameOver(board)
   }
 
 }
