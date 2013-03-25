@@ -21,8 +21,13 @@ object MatchApp extends App {
         log.info(s"Current state:\n$board")
         Match ! Go
 
-      case GameOver(board) =>
+      case GameOver(board, winner) =>
         log.info(s"Game Over:\n$board")
+        if (winner.isDefined)
+          log.info(s"It was won by ${winner.get.path.name}")
+        else
+          log.info("It ended in a draw")
+
         system.shutdown()
     }
   })

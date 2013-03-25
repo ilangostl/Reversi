@@ -8,7 +8,7 @@ object Match {
   case object CheckAndReport
 
   case class ProgressReport(board: Board)
-  case class GameOver(board: Board)
+  case class GameOver(board: Board, winner: Option[ActorRef])
 
   case class TakeTurn(board: Board)
   case class MakeMove(move: Location, player: ActorRef)
@@ -39,8 +39,8 @@ class Match(p1: ActorRef, p2: ActorRef, controller: ActorRef) extends Actor with
 
     case CheckAndReport =>
       if (board.isFinished) {
-        context.become(gameOver(board))
-        controller ! GameOver(board)
+        context.become(gameOver(board, board.winner.map(piecePlayerMap(_))))
+        self.tell(Go, controller)
       } else
         controller ! ProgressReport(board)
 
@@ -49,8 +49,9 @@ class Match(p1: ActorRef, p2: ActorRef, controller: ActorRef) extends Actor with
       self ! CheckAndReport
   }
 
-  def gameOver(board: Board): Receive = {
-    case _ => sender ! GameOver(board)
+  def gameOver(board: Board, winner: Option[ActorRef]): Receive = {
+    case Go =>
+      sender ! GameOver(board, winner)
   }
 
 }
