@@ -1,7 +1,7 @@
 package org.brautaset.reversi
 
 import akka.actor.ActorDSL._
-import akka.actor.{ActorLogging, Props, ActorSystem}
+import akka.actor.{ActorRef, ActorLogging, Props, ActorSystem}
 
 object MatchApp extends App {
 
@@ -13,16 +13,17 @@ object MatchApp extends App {
 
   actor(new Act with ActorLogging {
 
-    val Match = system.actorOf(Props(new Match(p1, p2, self)))
-    Match ! Go
+    val Match = context.actorOf(Props(new Match(p1, p2)))
+    Match ! Check
 
     become {
-      case ProgressReport(board) =>
-        log.info(s"Current state:\n$board")
+      case Ongoing(board, turn: ActorRef) =>
+        log.info(s"Turn: ${turn.path.name}")
         Match ! Go
 
-      case GameOver(board, winner) =>
+      case Finished(board, winner) =>
         log.info(s"Game Over:\n$board")
+
         if (winner.isDefined)
           log.info(s"It was won by ${winner.get.path.name}")
         else
