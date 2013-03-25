@@ -8,7 +8,7 @@ class Player extends Actor {
 
   def receive = {
     case TakeTurn(board) =>
-      sender ! MakeMove(board.legalMoves.head)
+      sender ! MakeMove(board.legalMoves.head, self)
   }
 
 }

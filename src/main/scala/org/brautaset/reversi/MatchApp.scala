@@ -14,12 +14,12 @@ object MatchApp extends App {
   actor(new Act with ActorLogging {
 
     val Match = system.actorOf(Props(new Match(p1, p2, self)))
-    Match ! Start
+    Match ! Go
 
     become {
       case ProgressReport(board) =>
         log.info(s"Current state:\n$board")
-        Match ! Continue
+        Match ! Go
 
       case GameOver(board) =>
         log.info(s"Game Over:\n$board")
