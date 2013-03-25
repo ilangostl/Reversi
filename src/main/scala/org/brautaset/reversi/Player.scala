@@ -7,8 +7,8 @@ class Player extends Actor {
   import Match._
 
   def receive = {
-    case YourTurn(board) =>
-      sender ! Put(board.legalMoves.head, self)
+    case Move(board) =>
+      sender ! Claim(board.legalMoves.head)
   }
 
 }

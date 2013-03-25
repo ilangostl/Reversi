@@ -15,10 +15,10 @@ object Match {
   case class Finished(board: Board, winner: Option[ActorRef])
 
   // Message sent to players
-  case class YourTurn(board: Board)
+  case class Move(board: Board)
 
   // Message returned from players
-  case class Put(move: Location, me: ActorRef)
+  case class Claim(location: Location)
 
 }
 
@@ -33,24 +33,24 @@ class Match(p1: ActorRef, p2: ActorRef) extends Actor with ActorLogging {
 
   def receive = {
     case Go =>
-      p1 ! YourTurn(initialBoard)
+      p1 ! Move(initialBoard)
 
     case Check =>
       sender ! Ongoing(initialBoard, p1)
 
-    case Put(move, `p1`) =>
+    case Claim(move) if sender == p1 =>
       context.become(gameOn(initialBoard.successor(move), p2, p1))
       self.tell(Check, context.parent)
   }
 
   def gameOn(board: Board, player: ActorRef, opponent: ActorRef): Receive = {
     case Go =>
-      player ! YourTurn(board)
+      player ! Move(board)
 
     case Check =>
       sender ! Ongoing(board, player)
 
-    case Put(move, `player`) =>
+    case Claim(move) if sender == player =>
       val newBoard = board.successor(move)
       context.become(
         if (newBoard.isFinished)
