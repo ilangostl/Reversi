@@ -33,14 +33,11 @@ class Match(p1: ActorRef, p2: ActorRef) extends Actor with ActorLogging {
 
   def receive = {
     case Go =>
-      p1 ! Move(initialBoard)
+      context.become(gameOn(initialBoard, p1, p2))
+      self forward Go
 
     case Check =>
       sender ! Ongoing(initialBoard, p1)
-
-    case Claim(move) if sender == p1 =>
-      context.become(gameOn(initialBoard.successor(move), p2, p1))
-      self.tell(Check, context.parent)
   }
 
   def gameOn(board: Board, player: ActorRef, opponent: ActorRef): Receive = {
