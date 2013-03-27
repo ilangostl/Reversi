@@ -20,81 +20,55 @@ class BoardSpec extends WordSpec with MustMatchers {
     }
   }
 
-  "A Board" should {
+  "toString" should {
 
-    "stringify sensibly" in {
+    "represent board suitably" in {
       Board().toString must be (
-        """/01234567
+        """
+          |/01234567
           |0........
           |1........
           |2........
-          |3...XO...
-          |4...OX...
+          |3...OX...
+          |4...XO...
           |5........
           |6........
           |7........
           |X to move""".stripMargin)
     }
+  }
 
-    "know locations held by opponent" in {
-      val board = Board()
-      board.locationsHeldByOpponent must have size (2)
-      board.locationsHeldByOpponent must be (Set(Location(3, 4), Location(4, 3)))
-    }
+  "isLegalMove" should {
 
-    "know unoccupied neighbours for locations held by opponent" in {
-      val unoccupiedNeighbours = Set(
-        Location(2,3), Location(2,4), Location(2,5),
-        Location(3,2), Location(3,5),
-        Location(4,2), Location(4,5),
-        Location(5,2), Location(5,3), Location(5,4))
-
-      val board = Board()
-      board.unoccupiedNeighboursToLocationsHeldByOpponent must have size (unoccupiedNeighbours.size)
-      board.unoccupiedNeighboursToLocationsHeldByOpponent must be (unoccupiedNeighbours)
-    }
-
-    "not return unoccupied neighbour locations outside the board" in {
-      val b = Board(X, Map(Location(0, 6) -> X, Location(0, 7) -> O))
-      b.unoccupiedNeighboursToLocationsHeldByOpponent must be(Set(Location(1, 6), Location(1, 7)))
-    }
-
-    "return no neighbours for unpopulated grid" in {
-      val b = Board(X, Map.empty[Location,Piece])
-      b.unoccupiedNeighboursToLocationsHeldByOpponent must be (Set())
-    }
-
-    "knows that [5,3] is a legal move" in {
-      Board().isLegalMove(Location(5, 3)) must be (true)
-    }
-
-    "know the legal moves" in {
-      Board().legalMoves must be (Set(Location(3,5), Location(4,2), Location(2,4), Location(5,3)))
-    }
-
-    "find flipped locations for a move" in {
-      Board().locationsFlippedByMove(Location(5, 3)) must be (Set(Location(4, 3)))
+    "know that [4,5] is a legal move" in {
+      Board().isLegalMove(Location(4, 5)) must be (true)
     }
   }
 
-  "A Board's successor" should {
+  "legalMoves" should {
+    "be 4 initially" in {
+      Board().legalMoves must be (Set(Location(4,5), Location(5,4), Location(3,2), Location(2,3)))
+    }
+  }
+
+  "successor" should {
 
     "update turn" in {
-      Board().successor(Location(5, 3)).turn must be (O)
+      Board().successor(Location(5, 4)).turn must be (O)
     }
 
     "update grid to occupy 1 more location" in {
-      Board().successor(Location(5, 3)).grid must have size (5)
+      Board().successor(Location(5, 4)).grid must have size (5)
     }
 
     "update grid to occupy move location" in {
-      val loc = Location(5, 3)
+      val loc = Location(5, 4)
       val grid = Map(
-        Location(3, 3) -> X,
-        Location(3, 4) -> O,
-        Location(4, 3) -> X,
-        Location(4, 4) -> X,
-        Location(5, 3) -> X)
+        Location(3,4) -> X,
+        Location(4,4) -> X,
+        Location(5,4) -> X,
+        Location(3,3) -> O,
+        Location(4,3) -> X)
       Board().successor(loc).grid must be (grid)
     }
 
@@ -107,17 +81,19 @@ class BoardSpec extends WordSpec with MustMatchers {
 
   }
 
-  "A Board's isFinished" should {
+  "isFinished" should {
+
     "start out false" in {
       Board().isFinished must be (false)
     }
 
-    "eventually become false" in {
+    "eventually become true" in {
       def iter(board: Board): Boolean =
         if (board.isFinished) true
         else iter(board.successor(board.legalMoves.head))
       iter(Board()) must be (true)
     }
+
   }
 
   "winner" should {
@@ -126,15 +102,14 @@ class BoardSpec extends WordSpec with MustMatchers {
     }
 
     "return as winner the side with most tiles" in {
-      Board().successor(Location(5, 3)).winner must be (Some(X))
+      Board().successor(Location(5, 4)).winner must be (Some(X))
     }
 
     "not be impacted by who's turn it is" in {
-      val board = Board().successor(Location(5, 3))
+      val board = Board().successor(Location(5, 4))
       // rewind turn
       Board(board.turn.opponent, board.grid).winner must be (Some(X))
     }
-
 
   }
 

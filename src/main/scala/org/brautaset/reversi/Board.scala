@@ -9,10 +9,10 @@ object Board {
   val rows = 8
 
   val initialGrid = Map(
-    Location(3, 3) -> X,
-    Location(3, 4) -> O,
-    Location(4, 3) -> O,
-    Location(4, 4) -> X)
+    Location(3, 3) -> O,
+    Location(3, 4) -> X,
+    Location(4, 3) -> X,
+    Location(4, 4) -> O)
 
   def apply(): Board =
     Board(X, initialGrid)
@@ -28,10 +28,10 @@ case class Board(turn: Piece, grid: Map[Location,Piece]) {
 
   def occupiedlocations = grid.keySet
 
-  lazy val locationsHeldByOpponent =
+  private lazy val locationsHeldByOpponent =
     grid.filterNot(_._2 == turn).keySet
 
-  def unoccupiedNeighboursToLocationsHeldByOpponent =
+  private def unoccupiedNeighboursToLocationsHeldByOpponent =
     locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedlocations
 
   private def flippedLocations(loc: Location, d: Direction) = {
@@ -58,28 +58,27 @@ case class Board(turn: Piece, grid: Map[Location,Piece]) {
   def legalMoves =
     unoccupiedNeighboursToLocationsHeldByOpponent.filter(isLegalMove(_))
 
-  def locationsFlippedByMove(location: Location) =
+  private def locationsFlippedByMove(location: Location) =
     Location.directions.flatMap(flippedLocations(location, _))
 
   def successor(move: Location) =
     if (isLegalMove(move))
       Board(turn.opponent, grid ++ (locationsFlippedByMove(move) + move).map((_, turn)))
     else
-      throw new IllegalArgumentException(s"$move is not a legal move @ " + this)
+      throw new IllegalArgumentException(s"$move is not a legal move at:" + this)
 
   def isFinished = legalMoves.isEmpty
 
   def winner = {
-    val opponent = turn.opponent
     val diff = grid.values.collect {
-      case `turn` => 1
-      case `opponent` => -1
+      case X => 1
+      case O => -1
     }.sum
 
     if (diff == 0)
       None
     else
-      Some(if (diff > 0) turn else turn.opponent)
+      Some(if (diff > 0) X else O)
   }
 
 
@@ -92,7 +91,7 @@ case class Board(turn: Piece, grid: Map[Location,Piece]) {
         case Some(p) => p.toString
       }
 
-    val head = "/" + (0 until columns).mkString
+    val head = (0 until columns).mkString("\n/", "", "")
     val body = (0 until rows).map(line(_).mkString)
     val foot = turn.toString + " to move"
     (head +: body :+ foot).mkString("\n")
