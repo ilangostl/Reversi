@@ -11,7 +11,6 @@ object Match {
   case object Check
 
   // Messages returned by Check
-  case class Prestart(board: Board)
   case class Ongoing(board: Board, turn: ActorRef)
   case class Finished(board: Board, winner: Option[ActorRef])
 
@@ -23,7 +22,7 @@ object Match {
 
 }
 
-class Match(p1: ActorRef, p2: ActorRef) extends Actor with ActorLogging {
+class Match(p1: ActorRef, p2: ActorRef, controller: ActorRef) extends Actor with ActorLogging {
 
   import Match._
 
@@ -32,14 +31,9 @@ class Match(p1: ActorRef, p2: ActorRef) extends Actor with ActorLogging {
     initialBoard.turn -> p1,
     initialBoard.turn.opponent -> p2)
 
-  def receive = {
-    case Go =>
-      context.become(gameOn(initialBoard, p1, p2))
-      self forward Go
+  context.become(gameOn(initialBoard, p1, p2))
 
-    case Check =>
-      sender ! Prestart(initialBoard)
-  }
+  def receive = Actor.emptyBehavior
 
   def gameOn(board: Board, player: ActorRef, opponent: ActorRef): Receive = {
     case Go =>
@@ -55,7 +49,8 @@ class Match(p1: ActorRef, p2: ActorRef) extends Actor with ActorLogging {
           gameOver(newBoard, newBoard.winner.map(piecePlayerMap(_)))
         else
           gameOn(newBoard, opponent, player))
-      self.tell(Check, context.parent)
+      self.tell(Check, controller)
+
   }
 
   def gameOver(board: Board, winner: Option[ActorRef]): Receive = {

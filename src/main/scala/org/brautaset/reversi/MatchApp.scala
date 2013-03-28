@@ -13,13 +13,10 @@ object MatchApp extends App {
 
   actor(new Act with ActorLogging {
 
-    val Match = context.actorOf(Props(new Match(p1, p2)))
+    val Match = context.actorOf(Props(new Match(p1, p2, self)))
     Match ! Check
 
     become {
-      case Prestart(board) =>
-        log.info(s"Starting game:\n$board")
-        Match ! Go
 
       case Ongoing(board, turn: ActorRef) =>
         log.info(s"Turn: ${turn.path.name}")
