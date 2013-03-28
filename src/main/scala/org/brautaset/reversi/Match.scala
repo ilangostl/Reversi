@@ -11,6 +11,7 @@ object Match {
   case object Check
 
   // Messages returned by Check
+  case class Prestart(board: Board)
   case class Ongoing(board: Board, turn: ActorRef)
   case class Finished(board: Board, winner: Option[ActorRef])
 
@@ -37,7 +38,7 @@ class Match(p1: ActorRef, p2: ActorRef) extends Actor with ActorLogging {
       self forward Go
 
     case Check =>
-      sender ! Ongoing(initialBoard, p1)
+      sender ! Prestart(initialBoard)
   }
 
   def gameOn(board: Board, player: ActorRef, opponent: ActorRef): Receive = {

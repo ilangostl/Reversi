@@ -17,6 +17,10 @@ object MatchApp extends App {
     Match ! Check
 
     become {
+      case Prestart(board) =>
+        log.info(s"Starting game:\n$board")
+        Match ! Go
+
       case Ongoing(board, turn: ActorRef) =>
         log.info(s"Turn: ${turn.path.name}")
         Match ! Go
