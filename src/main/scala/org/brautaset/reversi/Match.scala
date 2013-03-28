@@ -4,6 +4,8 @@ import akka.actor.{ActorLogging, ActorRef, Actor}
 
 object Match {
 
+  case class Start(p1: ActorRef, p2: ActorRef)
+
   // Make with the going-on.
   case object Go
 
@@ -22,20 +24,17 @@ object Match {
 
 }
 
-class Match(p1: ActorRef, p2: ActorRef, controller: ActorRef) extends Actor with ActorLogging {
+class Match(controller: ActorRef) extends Actor with ActorLogging {
 
   import Match._
 
-  val initialBoard = Board()
-  val piecePlayerMap = Map(
-    initialBoard.turn -> p1,
-    initialBoard.turn.opponent -> p2)
+  def receive = {
+    case Start(player, opponent) =>
+      context.become(gameOn(Board(), player, opponent, Map(X -> player, O -> opponent)))
+      self.tell(Check, controller)
+  }
 
-  context.become(gameOn(initialBoard, p1, p2))
-
-  def receive = Actor.emptyBehavior
-
-  def gameOn(board: Board, player: ActorRef, opponent: ActorRef): Receive = {
+  def gameOn(board: Board, player: ActorRef, opponent: ActorRef, map: Map[Piece,ActorRef]): Receive = {
     case Go =>
       player ! Move(board)
 
@@ -46,9 +45,9 @@ class Match(p1: ActorRef, p2: ActorRef, controller: ActorRef) extends Actor with
       val newBoard = board.successor(move)
       context.become(
         if (newBoard.isFinished)
-          gameOver(newBoard, newBoard.winner.map(piecePlayerMap(_)))
+          gameOver(newBoard, newBoard.winner.map(map(_)))
         else
-          gameOn(newBoard, opponent, player))
+          gameOn(newBoard, opponent, player, map))
       self.tell(Check, controller)
 
   }

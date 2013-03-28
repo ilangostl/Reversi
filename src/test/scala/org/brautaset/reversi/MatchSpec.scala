@@ -12,7 +12,8 @@ class MatchSpec extends TestKitSpec("MatchSpec") {
     val p2 = TestProbe()
     val driver = TestProbe()
     val board = Board()
-    val mat = system.actorOf(Props(new Match(p1.ref, p2.ref, driver.ref)))
+    val mat = system.actorOf(Props(new Match(driver.ref)))
+    mat ! Start(p1.ref, p2.ref)
   }
 
   "Go" should {
@@ -60,10 +61,14 @@ class MatchSpec extends TestKitSpec("MatchSpec") {
 
       moves.map { x =>
         mat.tell(x._2, x._1)
-        expectMsgType[Ongoing]
       }
 
-      expectMsg(Finished(board, Some(p1.ref)))
+      moves.drop(1).foreach { x =>
+        driver.expectMsgType[Ongoing]
+      }
+
+
+      driver.expectMsg(Finished(board, Some(p1.ref)))
 
     }
 

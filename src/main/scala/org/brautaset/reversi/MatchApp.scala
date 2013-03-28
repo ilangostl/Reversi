@@ -13,8 +13,8 @@ object MatchApp extends App {
 
   actor(new Act with ActorLogging {
 
-    val Match = context.actorOf(Props(new Match(p1, p2, self)))
-    Match ! Check
+    val Match = context.actorOf(Props(new Match(self)))
+    Match ! Start(p1, p2)
 
     become {
 
