@@ -93,7 +93,10 @@ case class Board(turn: Piece, grid: Map[Location,Piece]) {
 
     val head = (0 until columns).mkString("\n/", "", "")
     val body = (0 until rows).map(line(_).mkString)
-    val foot = turn.toString + " to move"
+    val foot = if (isFinished) winner match {
+      case Some(w) => w + " won"
+      case None => "Draw"
+    } else turn.toString + " to move"
     (head +: body :+ foot).mkString("\n")
   }
 
