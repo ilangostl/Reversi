@@ -2,9 +2,15 @@ package org.brautaset.reversi.fitness
 
 import org.brautaset.reversi.Board
 
-object Mobility extends Fitness {
+trait Mobility {
 
-  def fitness(board: Board) =
+  def mobilityFitness(board: Board) =
     board.legalMoves.size - Board(board.turn.opponent, board.grid).legalMoves.size
+
+}
+
+object Mobility extends Fitness with Mobility {
+
+  def fitness(board: Board) = mobilityFitness(board)
 
 }
