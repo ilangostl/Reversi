@@ -14,6 +14,13 @@ class MatchSpec extends TestKitSpec("MatchSpec") {
     val board = Board()
     val mat = system.actorOf(Props(new Match(driver.ref)))
     mat ! Start(p1.ref, p2.ref)
+    driver.expectMsg(Ongoing(board, p1.ref))
+  }
+
+  "Start" should {
+
+    "return initial state" in new Case {}
+
   }
 
   "Go" should {
@@ -48,50 +55,33 @@ class MatchSpec extends TestKitSpec("MatchSpec") {
 
     "eventually cause game over" in new Case {
 
+      val m = Map(X -> p1.ref, O -> p2.ref)
+      def iter(moves: List[Location], board: Board, player: TestProbe, opponent: TestProbe): Board =
+        if (moves.isEmpty)
+          board
+        else {
+          mat.tell(Claim(moves.head), player.ref)
+          iter(moves.tail, board.successor(moves.head), opponent, player)
+        }
+
       val moves = List(
-        (p1.ref, Location(4, 5)),
-        (p2.ref, Location(5, 3)),
-        (p1.ref, Location(4, 2)),
-        (p2.ref, Location(5, 5)),
-        (p1.ref, Location(6, 4)),
-        (p2.ref, Location(3, 5)),
-        (p1.ref, Location(4, 6)),
-        (p2.ref, Location(5, 5)),
-        (p1.ref, Location(2, 4)))
+        Location(4, 5),
+        Location(5, 3),
+        Location(4, 2),
+        Location(5, 5),
+        Location(6, 4),
+        Location(3, 5),
+        Location(4, 6),
+        Location(5, 4),
+        Location(2, 4))
 
-      moves.map { x =>
-        mat.tell(x._2, x._1)
-      }
+      val b = iter(moves, board, p1, p2)
 
-      moves.drop(1).foreach { x =>
-        driver.expectMsgType[Ongoing]
-      }
-
-
-      driver.expectMsg(Finished(board, Some(p1.ref)))
+      driver.expectMsgType[Ongoing]
+      driver.expectMsg(Finished(b, Some(p1.ref)))
 
     }
 
   }
-
-  /*
-  "An Ongoing match" should {
-
-    "respond to Go" in new Case {
-      mat ! Go // move out of starting state
-
-      var board = Board()
-      p1.expectMsg(Move(board))
-
-      p1.reply(Claim(m1))
-
-      board = board.successor(m1)
-      mat ! Check
-      expectMsg(Ongoing(board, p2.ref))
-
-
-
-    }
-  }*/
 
 }

@@ -125,6 +125,25 @@ class BoardSpec extends WordSpec with MustMatchers {
       iter(Board()) must be (true)
     }
 
+    "be possible after a few moves" in {
+      val moves = List(
+        Location(4, 5),
+        Location(5, 3),
+        Location(4, 2),
+        Location(5, 5),
+        Location(6, 4),
+        Location(3, 5),
+        Location(4, 6),
+        Location(5, 4),
+        Location(2, 4))
+
+      def iter(board: Board, moves: List[Location]): Board =
+        if (moves.isEmpty) board
+        else iter(board.successor(moves.head), moves.tail)
+
+      iter(Board(), moves).isFinished must be (true)
+    }
+
   }
 
   "winner" should {
