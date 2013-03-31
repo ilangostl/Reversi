@@ -69,6 +69,14 @@ case class Board(turn: Piece, grid: Map[Location,Piece]) {
 
   def isFinished = legalMoves.isEmpty
 
+  def finishScore = {
+    winner match {
+      case None => 0
+      case Some(`turn`) => Int.MaxValue
+      case _ => -Int.MaxValue
+    }
+  }
+
   def winner = {
     val diff = grid.values.collect {
       case X => 1
@@ -80,7 +88,6 @@ case class Board(turn: Piece, grid: Map[Location,Piece]) {
     else
       Some(if (diff > 0) X else O)
   }
-
 
   override def toString = {
     def line(r: Int) =

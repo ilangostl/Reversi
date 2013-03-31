@@ -146,6 +146,22 @@ class BoardSpec extends WordSpec with MustMatchers {
 
   }
 
+  "finishScore" should {
+
+    "return 0 for draws" in {
+      Board().finishScore must be (0)
+    }
+
+    "return Int.MaxValue for wins of current turn" in {
+      Board(X, Map(Location(0, 0) -> X)).finishScore must be (Int.MaxValue)
+    }
+
+    "return -Int.MaxValue for wins of current turn" in {
+      Board(O, Map(Location(0, 0) -> X)).finishScore must be (-Int.MaxValue)
+    }
+
+  }
+
   "winner" should {
     "return None in case of a draw" in {
       Board().winner must be (None)
