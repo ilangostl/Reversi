@@ -25,20 +25,20 @@ case class Board(turn: Side, grid: Map[Location,Side]) {
 
   import Board._
 
-  def occupiedlocations = grid.keySet
+  private def occupiedLocations = grid.keySet
 
   private lazy val locationsHeldByOpponent =
     grid.filterNot(_._2 == turn).keySet
 
   private def unoccupiedNeighboursToLocationsHeldByOpponent =
-    locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedlocations
+    locationsHeldByOpponent.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupiedLocations
 
   private def flippedLocations(loc: Location, d: Direction) = {
     @tailrec
     def iter(l: Location, flipped: List[Location]): List[Location] =
       if (locationsHeldByOpponent.contains(l))
         iter(l.moveBy(d), l :: flipped)
-      else if (occupiedlocations.contains(l))
+      else if (occupiedLocations.contains(l))
         flipped
       else
         Nil
