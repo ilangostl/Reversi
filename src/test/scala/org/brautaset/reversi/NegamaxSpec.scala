@@ -1,14 +1,12 @@
 package org.brautaset.reversi
 
-import fitness.{Capture, Fitness}
+import fitness.Capture
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.WordSpec
 
 class NegamaxSpec extends WordSpec with MustMatchers {
 
-  val fit = new Fitness with Capture {
-    def fitness(board: Board) = captureFitness(board)
-  }
+  def fit(board: Board) = new Capture {}.captureFitness(board)
 
   val winningMoves = List(
     Location(4, 5),
