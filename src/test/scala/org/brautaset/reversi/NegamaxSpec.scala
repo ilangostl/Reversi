@@ -21,9 +21,9 @@ class NegamaxSpec extends WordSpec with MustMatchers {
     else iter(board.successor(moves.head), moves.tail)
 
 
-  def nm(board: Board, ply: Int) = Negamax.negamax(Fitness.capture)(board, ply)
+  def nm(board: Board, ply: Int) = Negamax(Fitness.capture)(board, ply)
 
-  "negamax" should {
+  "Negamax" should {
 
     "not accept finished boards" in {
       intercept[IllegalArgumentException] {

@@ -2,7 +2,7 @@ package org.brautaset.reversi
 
 object Negamax {
 
-  def negamax(fitness: (Board) => Int)(board: Board, plyLeft: Int) = {
+  def apply(fitness: (Board) => Int)(board: Board, plyLeft: Int) = {
     require(!board.isFinished)
     require(plyLeft > 0)
 
