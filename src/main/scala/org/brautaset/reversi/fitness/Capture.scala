@@ -14,8 +14,3 @@ trait Capture {
 
 }
 
-object Capture extends Fitness with Capture {
-
-  def fitness(board: Board) = captureFitness(board)
-
-}

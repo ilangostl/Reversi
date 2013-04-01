@@ -8,25 +8,25 @@ class MobilitySpec extends WordSpec with MustMatchers {
 
   "fitness" should {
 
-    "be 0 originally" in {
-      Mobility.fitness(Board()) must be (0)
+    "be 0 originally" in new Mobility {
+      mobilityFitness(Board()) must be (0)
     }
 
-    "be 0 when mobility is even, even if capture is not" in {
+    "be 0 when mobility is even, even if capture is not" in new Mobility {
       val board = Board().successor(Location(4, 5))
-      Mobility.fitness(board) must be (0)
+      mobilityFitness(board) must be (0)
     }
 
-    "be positive when current player has advantage" in {
+    "be positive when current player has advantage" in new Mobility {
       val board0 = Board().successor(Location(4, 5))
       val board1 = board0.successor(Location(5, 3))
-      Mobility.fitness(board1) must be (1)
+      mobilityFitness(board1) must be (1)
     }
 
-    "be negative when current player is disadvantaged" in {
+    "be negative when current player is disadvantaged" in new Mobility {
       val board0 = Board().successor(Location(4, 5))
       val board1 = board0.successor(Location(5, 3))
-      Mobility.fitness(Board(O, board1.grid)) must be (-1)
+      mobilityFitness(Board(O, board1.grid)) must be (-1)
     }
 
   }

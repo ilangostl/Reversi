@@ -8,9 +8,3 @@ trait Mobility {
     board.legalMoves.size - Board(board.turn.opponent, board.grid).legalMoves.size
 
 }
-
-object Mobility extends Fitness with Mobility {
-
-  def fitness(board: Board) = mobilityFitness(board)
-
-}

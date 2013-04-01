@@ -8,17 +8,17 @@ class CaptureSpec extends WordSpec with MustMatchers {
 
   "fitness" should {
 
-    "return 0 for initial board" in {
-      Capture.fitness(Board()) must be (0)
+    "return 0 for initial board" in new Capture {
+      captureFitness(Board()) must be (0)
     }
 
-    "be negative when current player is disadvantaged" in {
-      Capture.fitness(Board().successor(Location(4, 5))) must be (-3)
+    "be negative when current player is disadvantaged" in new Capture {
+      captureFitness(Board().successor(Location(4, 5))) must be (-3)
     }
 
-    "be positive when current player has advantage" in {
+    "be positive when current player has advantage" in new Capture {
       val board = Board().successor(Location(4, 5))
-      Capture.fitness(Board(X, board.grid)) must be (3)
+      captureFitness(Board(X, board.grid)) must be (3)
     }
 
 
