@@ -42,14 +42,6 @@ class NegamaxSpec extends WordSpec with MustMatchers {
       }
     }
 
-    "find a move from initial board at ply 1" in {
-      nm(Board(), 1) must be (Location(4, 5))
-    }
-
-    "find a move from initial board at ply 2" in {
-      nm(Board(), 2) must be (Location(4, 5))
-    }
-
     "find winning move at ply 1" in {
       val board = iter(Board(), winningMoves.take(8))
       nm(board, 1) must be (winningMoves(8))
