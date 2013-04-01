@@ -1,7 +1,8 @@
-package org.brautaset.reversi
+package org.brautaset.reversi.core
 
 import org.scalatest.WordSpec
 import org.scalatest.matchers.MustMatchers
+import scala.Some
 
 class BoardSpec extends WordSpec with MustMatchers {
 

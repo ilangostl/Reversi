@@ -1,6 +1,7 @@
 package org.brautaset.reversi
 
 import annotation.tailrec
+import core.{Location, Board}
 
 object Othello extends App {
 

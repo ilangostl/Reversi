@@ -1,4 +1,4 @@
-package org.brautaset.reversi
+package org.brautaset.reversi.core
 
 abstract sealed trait Side {
   def opponent = Side.opponent(this)

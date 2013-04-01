@@ -1,5 +1,7 @@
 package org.brautaset.reversi
 
+import core.Board
+
 object Negamax {
 
   def apply(fitness: (Board) => Int)(board: Board, plyLeft: Int) = {

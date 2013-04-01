@@ -1,7 +1,6 @@
-package org.brautaset.reversi
+package org.brautaset.reversi.core
 
 import annotation.tailrec
-import org.brautaset.reversi.Location.Direction
 
 object Board {
 
@@ -53,13 +52,13 @@ case class Board(turn: Side, grid: Map[Location,Side]) {
   }
 
   def isLegalMove(location: Location) =
-    Location.directions.find(!flippedLocations(location, _).isEmpty).isDefined
+    Direction.all.find(!flippedLocations(location, _).isEmpty).isDefined
 
   def legalMoves =
     unoccupiedNeighboursToLocationsHeldByOpponent.filter(isLegalMove(_))
 
   private def locationsFlippedByMove(location: Location) =
-    Location.directions.flatMap(flippedLocations(location, _))
+    Direction.all.flatMap(flippedLocations(location, _))
 
   def successor(move: Location) =
     if (isLegalMove(move))

@@ -1,5 +1,7 @@
 package org.brautaset.reversi
 
+import core.{Location, Board}
+
 object Fitness {
 
   def mobility(board: Board) =

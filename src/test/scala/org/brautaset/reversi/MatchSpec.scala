@@ -2,6 +2,7 @@ package org.brautaset.reversi
 
 import akka.testkit.TestProbe
 import akka.actor.Props
+import core.{O, X, Location, Board}
 
 class MatchSpec extends TestKitSpec("MatchSpec") {
 

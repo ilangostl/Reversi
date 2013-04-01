@@ -1,6 +1,7 @@
 package org.brautaset.reversi
 
 import akka.actor.{ActorLogging, ActorRef, Actor}
+import core._
 
 object Match {
 

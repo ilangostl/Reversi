@@ -1,4 +1,4 @@
-package org.brautaset.reversi
+package org.brautaset.reversi.core
 
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.WordSpec

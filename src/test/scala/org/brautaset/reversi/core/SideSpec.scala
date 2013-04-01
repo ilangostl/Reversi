@@ -1,9 +1,9 @@
-package org.brautaset.reversi
+package org.brautaset.reversi.core
 
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.WordSpec
 
-class PieceSpec extends WordSpec with MustMatchers {
+class SideSpec extends WordSpec with MustMatchers {
 
   "A Side" should {
 

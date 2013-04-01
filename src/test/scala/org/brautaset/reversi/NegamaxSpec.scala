@@ -1,5 +1,6 @@
 package org.brautaset.reversi
 
+import core.{X, Location, Board}
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.WordSpec
 
