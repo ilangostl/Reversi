@@ -5,7 +5,7 @@ import org.scalatest.WordSpec
 
 class PieceSpec extends WordSpec with MustMatchers {
 
-  "A Piece" should {
+  "A Side" should {
 
     "know its opponent" in {
       X.opponent must be (O)

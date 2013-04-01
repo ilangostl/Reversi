@@ -14,7 +14,7 @@ class BoardSpec extends WordSpec with MustMatchers {
     }
 
     "accept player & grid" in {
-      val r = Board(O, Map.empty[Location,Piece])
+      val r = Board(O, Map.empty[Location,Side])
       r.turn must be (O)
       r.grid must be (Map())
     }

@@ -34,7 +34,7 @@ class Match(controller: ActorRef) extends Actor with ActorLogging {
       self.tell(Check, controller)
   }
 
-  def gameOn(board: Board, player: ActorRef, opponent: ActorRef, map: Map[Piece,ActorRef]): Receive = {
+  def gameOn(board: Board, player: ActorRef, opponent: ActorRef, map: Map[Side,ActorRef]): Receive = {
     case Go =>
       player ! Move(board)
 

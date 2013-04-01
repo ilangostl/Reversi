@@ -22,7 +22,7 @@ object Board {
 
 }
 
-case class Board(turn: Piece, grid: Map[Location,Piece]) {
+case class Board(turn: Side, grid: Map[Location,Side]) {
 
   import Board._
 
