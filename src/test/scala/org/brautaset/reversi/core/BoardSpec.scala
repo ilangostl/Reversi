@@ -109,10 +109,30 @@ class BoardSpec extends WordSpec with MustMatchers {
 
   }
 
+  "pass" should {
+
+    "flip the player turn" in {
+      val a = Board()
+      val b = a.pass()
+      b.turn must be (a.turn.opponent)
+    }
+
+    "retain the captures" in {
+      val a = Board()
+      val b = a.pass()
+      b.captures must be (a.captures)
+    }
+  }
+
   "isFinished" should {
 
     "start out false" in {
       Board().isFinished must be (false)
+    }
+
+    "account for passes" in {
+      val board = Board(X, Map(O -> Set(Location(0, 0)), X -> Set(Location(0, 1))))
+      board.isFinished must be (false)
     }
 
     "eventually become true" in {
