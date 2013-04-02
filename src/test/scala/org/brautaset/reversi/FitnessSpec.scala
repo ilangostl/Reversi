@@ -8,6 +8,22 @@ class FitnessSpec extends WordSpec with MustMatchers {
 
   import Fitness._
 
+  "finish" should {
+
+    "return 0 for draws" in {
+      finish(Board()) must be (0)
+    }
+
+    "return Int.MaxValue for wins of current turn" in {
+      finish(Board(X, Map(X -> Set(Location(0, 0)), O -> Set()))) must be (Int.MaxValue)
+    }
+
+    "return -Int.MaxValue for wins of current turn" in {
+      finish(Board(O, Map(X -> Set(Location(0, 0)), O -> Set()))) must be (-Int.MaxValue)
+    }
+
+  }
+
   "capture" should {
 
     "return 0 for initial board" in {

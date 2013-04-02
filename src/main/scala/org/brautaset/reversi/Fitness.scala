@@ -1,8 +1,17 @@
 package org.brautaset.reversi
 
-import core.{Side, Location, Board}
+import core.{Location, Board}
 
 object Fitness {
+
+  def finish(board: Board) = {
+    val turn = board.turn
+    board.winner match {
+      case None => 0
+      case Some(`turn`) => Int.MaxValue
+      case _ => -Int.MaxValue
+    }
+  }
 
   def mobility(board: Board) =
     board.legalMoves.size - board.legalMoves(board.turn.opponent).size

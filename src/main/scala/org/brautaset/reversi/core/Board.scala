@@ -69,14 +69,6 @@ case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
 
   def isFinished = legalMoves.isEmpty
 
-  def finishScore = {
-    winner match {
-      case None => 0
-      case Some(`turn`) => Int.MaxValue
-      case _ => -Int.MaxValue
-    }
-  }
-
   def winner =
     (captures(X).size - captures(O).size) match {
       case 0 => None
