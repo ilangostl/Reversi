@@ -1,6 +1,6 @@
 package org.brautaset.reversi
 
-import core.{X, Location, Board}
+import core.{O, X, Location, Board}
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.WordSpec
 
@@ -28,7 +28,7 @@ class NegamaxSpec extends WordSpec with MustMatchers {
 
     "not accept finished boards" in {
       intercept[IllegalArgumentException] {
-        nm(Board(X, Map()), 1)
+        nm(Board(X, Map(X -> Set.empty, O -> Set.empty)), 1)
       }
     }
 

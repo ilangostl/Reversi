@@ -20,7 +20,7 @@ class FitnessSpec extends WordSpec with MustMatchers {
 
     "be positive when current player has advantage" in {
       val board = Board().successor(Location(4, 5))
-      capture(Board(X, board.grid)) must be (3)
+      capture(Board(X, board.captures)) must be (3)
     }
 
   }
@@ -32,22 +32,22 @@ class FitnessSpec extends WordSpec with MustMatchers {
     }
 
     "score board with corner" in {
-      val board = Board(X, Map(Location(0, 0) -> X))
+      val board = Board(X, Map(X -> Set(Location(0, 0)), O -> Set()))
       corner(board) must be (1)
     }
 
     "score board with opponent's corner" in {
-      val board = Board(O, Map(Location(0, 0) -> X))
+      val board = Board(X, Map(O -> Set(Location(0, 0)), X -> Set()))
       corner(board) must be (-1)
     }
 
     "score board with more than a corner" in {
-      val board = Board(X, Map(Location(0, 0) -> X, Location(1, 0) -> O))
+      val board = Board(X, Map(X -> Set(Location(0, 0)), O -> Set(Location(1, 0))))
       corner(board) must be (1)
     }
 
     "score board with three corners" in {
-      val board = Board(X, Map(Location(0, 0) -> X, Location(7, 0) -> O, Location(7, 7) -> X))
+      val board = Board(X, Map(X -> Set(Location(0, 0), Location(7, 7)), O -> Set(Location(7, 0))))
       corner(board) must be (1)
     }
 
@@ -73,7 +73,7 @@ class FitnessSpec extends WordSpec with MustMatchers {
     "be negative when current player is disadvantaged" in {
       val board0 = Board().successor(Location(4, 5))
       val board1 = board0.successor(Location(5, 3))
-      mobility(Board(O, board1.grid)) must be (-1)
+      mobility(Board(O, board1.captures)) must be (-1)
     }
 
   }

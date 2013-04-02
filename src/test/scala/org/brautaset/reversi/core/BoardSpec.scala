@@ -2,7 +2,6 @@ package org.brautaset.reversi.core
 
 import org.scalatest.WordSpec
 import org.scalatest.matchers.MustMatchers
-import scala.Some
 
 class BoardSpec extends WordSpec with MustMatchers {
 
@@ -11,13 +10,13 @@ class BoardSpec extends WordSpec with MustMatchers {
     "use defaults when invoked with no arguments" in {
       val b = Board()
       b.turn must be (X)
-      b.grid must be (Board.initialGrid)
+      b.captures must be (Board.initialCaptures)
     }
 
-    "accept player & grid" in {
-      val r = Board(O, Map.empty[Location,Side])
+    "accept player & captures" in {
+      val r = Board(O, Map(X -> Set(), O -> Set()))
       r.turn must be (O)
-      r.grid must be (Map())
+      r.captures must be (Map(X -> Set(), O -> Set()))
     }
   }
 
@@ -39,7 +38,7 @@ class BoardSpec extends WordSpec with MustMatchers {
     }
 
     "represent board suitably when finished" in {
-      Board(O, Map(Location(4,4) -> X)).toString must be (
+      Board(O, Map(X -> Set(Location(4, 4)), O -> Set())).toString must be (
         """
           |/01234567
           |0........
@@ -54,7 +53,7 @@ class BoardSpec extends WordSpec with MustMatchers {
     }
 
     "represent board suitably when drawn" in {
-      Board(O, Map(Location(7,0) -> O, Location(4,4) -> X)).toString must be (
+      Board(O, Map(O -> Set(Location(7,0)), X -> Set(Location(4,4)))).toString must be (
         """
           |/01234567
           |0.......O
@@ -89,19 +88,16 @@ class BoardSpec extends WordSpec with MustMatchers {
       Board().successor(Location(5, 4)).turn must be (O)
     }
 
-    "update grid to occupy 1 more location" in {
-      Board().successor(Location(5, 4)).grid must have size (5)
+    "update captures to occupy 1 more location" in {
+      Board().successor(Location(5, 4)).captures.values.flatten must have size (5)
     }
 
-    "update grid to occupy move location" in {
-      val loc = Location(5, 4)
-      val grid = Map(
-        Location(3,4) -> X,
-        Location(4,4) -> X,
-        Location(5,4) -> X,
-        Location(3,3) -> O,
-        Location(4,3) -> X)
-      Board().successor(loc).grid must be (grid)
+    "update captures to occupy move location" in {
+      val loc = Location(5,4)
+      val captures = Map(
+        X -> Set(Location(3,4), Location(4,4), Location(5,4), Location(4,3)),
+        O -> Set(Location(3,3)))
+      Board().successor(loc).captures must be (captures)
     }
 
     "throw if attempting to make illegal move" in {
@@ -154,11 +150,11 @@ class BoardSpec extends WordSpec with MustMatchers {
     }
 
     "return Int.MaxValue for wins of current turn" in {
-      Board(X, Map(Location(0, 0) -> X)).finishScore must be (Int.MaxValue)
+      Board(X, Map(X -> Set(Location(0, 0)), O -> Set())).finishScore must be (Int.MaxValue)
     }
 
     "return -Int.MaxValue for wins of current turn" in {
-      Board(O, Map(Location(0, 0) -> X)).finishScore must be (-Int.MaxValue)
+      Board(O, Map(X -> Set(Location(0, 0)), O -> Set())).finishScore must be (-Int.MaxValue)
     }
 
   }
@@ -175,7 +171,7 @@ class BoardSpec extends WordSpec with MustMatchers {
     "not be impacted by who's turn it is" in {
       val board = Board().successor(Location(5, 4))
       // rewind turn
-      Board(board.turn.opponent, board.grid).winner must be (Some(X))
+      Board(board.turn.opponent, board.captures).winner must be (Some(X))
     }
 
   }
