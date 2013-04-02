@@ -9,5 +9,3 @@ libraryDependencies ++=
     "org.scalatest" %% "scalatest" % "2.0.M5b" % "test" ::
     "com.typesafe.akka" %% "akka-testkit" % "2.1.0" % "test" ::
     Nil
-
-parallelExecution in Test := false
