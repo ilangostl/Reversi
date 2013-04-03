@@ -54,12 +54,13 @@ case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
   def isLegalMove(side: Side, location: Location) =
     Direction.all.find(!flippedLocations(side.opponent, location, _).isEmpty).isDefined
 
-  def legalMoves: Set[Location] = legalMoves(turn)
+  lazy val legalMoves: Set[Location] = legalMoves(turn)
   def legalMoves(side: Side) =
     unoccupiedNeighbours(side.opponent).filter(isLegalMove(side, _))
 
   def pass() = {
     require(legalMoves.isEmpty)
+    require(!isFinished)
     Board(turn.opponent, captures)
   }
 
@@ -73,7 +74,7 @@ case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
   }
 
   // Board is only finished once _both_ players are out of moves
-  def isFinished = legalMoves.isEmpty && legalMoves(turn.opponent).isEmpty
+  lazy val isFinished = legalMoves.isEmpty && legalMoves(turn.opponent).isEmpty
 
   def winner =
     (captures(X).size - captures(O).size) match {
