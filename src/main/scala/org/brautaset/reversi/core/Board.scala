@@ -59,7 +59,7 @@ case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
     unoccupiedNeighbours(side.opponent).filter(isLegalMove(side, _))
 
   def pass() = {
-    // TODO: require(legalMoves.isEmpty) ?
+    require(legalMoves.isEmpty)
     Board(turn.opponent, captures)
   }
 

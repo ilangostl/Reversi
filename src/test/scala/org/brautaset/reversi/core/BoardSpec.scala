@@ -111,14 +111,20 @@ class BoardSpec extends WordSpec with MustMatchers {
 
   "pass" should {
 
+    "not be possible if player can move" in {
+      intercept[IllegalArgumentException] {
+        Board().pass()
+      }
+    }
+
     "flip the player turn" in {
-      val a = Board()
+      val a = Board(X, Map(O -> Set(Location(0, 0)), X -> Set(Location(0, 1))))
       val b = a.pass()
       b.turn must be (a.turn.opponent)
     }
 
     "retain the captures" in {
-      val a = Board()
+      val a = Board(X, Map(O -> Set(Location(0, 0)), X -> Set(Location(0, 1))))
       val b = a.pass()
       b.captures must be (a.captures)
     }
