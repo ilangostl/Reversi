@@ -1,6 +1,4 @@
-package org.brautaset.reversi
-
-import core.{Location, Board}
+package org.brautaset.reversi.core
 
 object Fitness {
 
