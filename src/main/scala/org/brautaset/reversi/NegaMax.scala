@@ -4,11 +4,11 @@ import core.Board
 
 object Negamax {
 
-  def apply(fitness: (Board) => Int)(board: Board, plyLeft: Int) = {
+  def apply(fitness: (Board) => Double)(board: Board, plyLeft: Int) = {
     require(!board.isFinished)
     require(plyLeft > 0)
 
-    def iter(board: Board, plyLeft: Int): Int =
+    def iter(board: Board, plyLeft: Int): Double =
       if (board.isFinished || plyLeft <= 0)
         -fitness(board)
       else

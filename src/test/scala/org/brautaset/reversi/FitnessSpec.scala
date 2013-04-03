@@ -15,11 +15,11 @@ class FitnessSpec extends WordSpec with MustMatchers {
     }
 
     "return Int.MaxValue for wins of current turn" in {
-      finish(Board(X, Map(X -> Set(Location(0, 0)), O -> Set()))) must be (Int.MaxValue)
+      finish(Board(X, Map(X -> Set(Location(0, 0)), O -> Set()))) must be (Double.MaxValue)
     }
 
     "return -Int.MaxValue for wins of current turn" in {
-      finish(Board(O, Map(X -> Set(Location(0, 0)), O -> Set()))) must be (-Int.MaxValue)
+      finish(Board(O, Map(X -> Set(Location(0, 0)), O -> Set()))) must be (Double.MinValue)
     }
 
   }
@@ -94,6 +94,17 @@ class FitnessSpec extends WordSpec with MustMatchers {
 
   }
 
+  "fitness" should {
 
+    "be 0 for initial board" in new Fitness(1, 1, 1) {
+      fitness(Board()) must be (0)
+    }
+
+    "address weighted capture, corners and mobility" in new Fitness (1, 10, 100) {
+      val board = Board(X, Map(X -> Set(Location(0, 0)), O -> Set(Location(1, 0), Location(1, 1))))
+      fitness(board) must be (-1 + 20 + 100)
+    }
+
+  }
 
 }
