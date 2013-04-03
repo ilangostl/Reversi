@@ -6,6 +6,8 @@ import org.scalatest.WordSpec
 
 class NegamaxSpec extends WordSpec with MustMatchers {
 
+  import Board._
+
   val winningMoves = List(
     Location(4, 5),
     Location(5, 3),
@@ -19,12 +21,9 @@ class NegamaxSpec extends WordSpec with MustMatchers {
 
   def iter(board: Board, moves: List[Location]): Board =
     if (moves.isEmpty) board
-    else iter(board.successor(moves.head), moves.tail)
+    else iter(board.successor(Occupy(moves.head)), moves.tail)
 
-
-  def fitness(board: Board) = if (board.isFinished) Fitness.finish(board) else Fitness.capture(board)
-
-  def nm(board: Board, ply: Int) = Negamax(fitness)(board, ply)
+  def nm(board: Board, ply: Int) = Negamax(Fitness(1, 0, 0).fitness)(board, ply)
 
   "Negamax" should {
 
@@ -42,12 +41,24 @@ class NegamaxSpec extends WordSpec with MustMatchers {
 
     "find winning move at ply 1" in {
       val board = iter(Board(), winningMoves.take(8))
-      nm(board, 1) must be (winningMoves(8))
+      nm(board, 1) must be (Occupy(winningMoves(8)))
     }
 
     "avoid losing move at ply 2" in {
       val board = iter(Board(), winningMoves.take(7))
-      nm(board, 2) must not be (winningMoves(7))
+      nm(board, 2) must not be (Occupy(winningMoves(7)))
+    }
+
+    "be able to play a game to the end" in {
+
+      val nm = Negamax(Fitness(1, 1, 1).fitness) _
+
+      def iter(board: Board): Board =
+        if (board.isFinished) board
+        else iter(board.successor(nm(board, 2)))
+
+      val board = iter(Board())
+      board.isFinished must be (true)
     }
 
   }

@@ -7,6 +7,7 @@ import core.{O, X, Location, Board}
 class MatchSpec extends TestKitSpec("MatchSpec") {
 
   import Match._
+  import Board._
 
   trait Case {
     val p1 = TestProbe()
@@ -45,13 +46,13 @@ class MatchSpec extends TestKitSpec("MatchSpec") {
   "Claim" should {
 
     "do nothing unless it is from current player" in new Case {
-      mat ! Claim(Location(4, 5))
+      mat ! Claim(Occupy(Location(4, 5)))
       driver.expectNoMsg()
     }
 
     "advance the game to its successor state" in new Case {
-      mat.tell(Claim(Location(4, 5)), p1.ref)
-      driver.expectMsg(Ongoing(board.successor(Location(4, 5)), p2.ref))
+      mat.tell(Claim(Occupy(Location(4, 5))), p1.ref)
+      driver.expectMsg(Ongoing(board.successor(Occupy(Location(4, 5))), p2.ref))
     }
 
     "eventually cause game over" in new Case {
@@ -61,8 +62,8 @@ class MatchSpec extends TestKitSpec("MatchSpec") {
         if (moves.isEmpty)
           board
         else {
-          mat.tell(Claim(moves.head), player.ref)
-          iter(moves.tail, board.successor(moves.head), opponent, player)
+          mat.tell(Claim(Occupy(moves.head)), player.ref)
+          iter(moves.tail, board.successor(Occupy(moves.head)), opponent, player)
         }
 
       val moves = List(

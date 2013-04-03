@@ -101,7 +101,7 @@ class FitnessSpec extends WordSpec with MustMatchers {
 
     "address weighted capture, corners and mobility" in new Fitness (1, 10, 100) {
       val board = Board(X, Map(X -> Set(Location(0, 0)), O -> Set(Location(1, 0), Location(1, 1))))
-      fitness(board) must be (-1 + 20 + 100)
+      fitness(board) must be (-1 + 10 + 100)
     }
 
   }

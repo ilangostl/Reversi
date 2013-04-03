@@ -1,11 +1,17 @@
 package org.brautaset.reversi
 
 import annotation.tailrec
-import core.{Location, Board}
+import core.{Fitness, Location, Board}
 
 object Othello extends App {
 
+  import Board._
+
   val Move = """(\d)\s*(\d)""".r
+
+  val fitness = Fitness(1, 1, 1)
+
+  val negamax = Negamax(fitness.fitness) _
 
   commandLoop(Board())
 
@@ -21,7 +27,7 @@ object Othello extends App {
       case Move(c, r) =>
         val move = Location(c.toInt, r.toInt)
         if (board.isLegalMove(move)) {
-          commandLoop(board.successor(move))
+          commandLoop(board.successor(Occupy(move)))
         } else {
           println("Illegal move!")
           commandLoop(board)
@@ -36,10 +42,10 @@ object Othello extends App {
 
   private def auto(board: Board): Unit = {
     println(board)
-    if (board.legalMoves.isEmpty)
+    if (board.isFinished)
       println("GAME OVER")
     else
-      auto(board.successor(board.legalMoves.head))
+      auto(board.successor(negamax(board, 2)))
   }
 
 }

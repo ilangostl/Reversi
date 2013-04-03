@@ -21,7 +21,7 @@ object Match {
   case class Move(board: Board)
 
   // Message returned from players
-  case class Claim(location: Location)
+  case class Claim(mv: core.Board.Move)
 
 }
 

@@ -5,6 +5,8 @@ import org.scalatest.matchers.MustMatchers
 
 class BoardSpec extends WordSpec with MustMatchers {
 
+  import Board._
+
   "A Board's constructor" should {
 
     "use defaults when invoked with no arguments" in {
@@ -78,18 +80,18 @@ class BoardSpec extends WordSpec with MustMatchers {
 
   "legalMoves" should {
     "be 4 initially" in {
-      Board().legalMoves must be (Set(Location(4,5), Location(5,4), Location(3,2), Location(2,3)))
+      Board().legalMoves must be (Set(Location(4,5), Location(5,4), Location(3,2), Location(2,3)).map(Occupy(_)))
     }
   }
 
   "successor" should {
 
     "update turn" in {
-      Board().successor(Location(5, 4)).turn must be (O)
+      Board().successor(Occupy(Location(5, 4))).turn must be (O)
     }
 
     "update captures to occupy 1 more location" in {
-      Board().successor(Location(5, 4)).captures.values.flatten must have size (5)
+      Board().successor(Occupy(Location(5, 4))).captures.values.flatten must have size (5)
     }
 
     "update captures to occupy move location" in {
@@ -107,31 +109,27 @@ class BoardSpec extends WordSpec with MustMatchers {
 
     }
 
-  }
-
-  "pass" should {
-
-    "not be possible if player can move" in {
+    "not accept pass if player can move" in {
       intercept[IllegalArgumentException] {
-        Board().pass()
+        Board().successor(Pass)
       }
     }
 
-    "not be possible if finished" in {
+    "not accept pass if finished" in {
       intercept[IllegalArgumentException] {
-        Board(X, Map(O -> Set(), X -> Set())).pass()
+        Board(X, Map(O -> Set(), X -> Set())).successor(Pass)
       }
     }
 
     "flip the player turn" in {
       val a = Board(X, Map(O -> Set(Location(0, 0)), X -> Set(Location(0, 1))))
-      val b = a.pass()
+      val b = a.successor(Pass)
       b.turn must be (a.turn.opponent)
     }
 
     "retain the captures" in {
       val a = Board(X, Map(O -> Set(Location(0, 0)), X -> Set(Location(0, 1))))
-      val b = a.pass()
+      val b = a.successor(Pass)
       b.captures must be (a.captures)
     }
   }

@@ -8,7 +8,7 @@ class Player extends Actor {
 
   def receive = {
     case Move(board) =>
-      sender ! Claim(board.legalMoves.head)
+      sender ! board.legalMoves.head
   }
 
 }

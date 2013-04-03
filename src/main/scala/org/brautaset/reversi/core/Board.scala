@@ -4,6 +4,10 @@ import annotation.tailrec
 
 object Board {
 
+  sealed trait Move
+  case object Pass extends Move
+  case class Occupy(loc: Location) extends Move
+
   val columns = 8
   val rows = 8
 
@@ -54,27 +58,37 @@ case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
   def isLegalMove(side: Side, location: Location) =
     Direction.all.find(!flippedLocations(side.opponent, location, _).isEmpty).isDefined
 
-  lazy val legalMoves: Set[Location] = legalMoves(turn)
-  def legalMoves(side: Side) =
-    unoccupiedNeighbours(side.opponent).filter(isLegalMove(side, _))
+  lazy val legalMoves: Set[Move] = legalMoves(turn)
 
-  def pass() = {
-    require(legalMoves.isEmpty)
+  def legalMoves(side: Side): Set[Move] = {
     require(!isFinished)
-    Board(turn.opponent, captures)
+    val destinations: Set[Move] = legalMoveDestinations(side).map(Occupy(_))
+    if (destinations.isEmpty) Set(Pass)
+    else destinations
   }
 
-  def successor(move: Location) = {
-    require(isLegalMove(move))
-    val flipped = Direction.all.flatMap(flippedLocations(turn.opponent, move, _)) + move
-    Board(turn.opponent, Map(
-      turn -> (captures(turn) ++ flipped),
-      turn.opponent -> (captures(turn.opponent) -- flipped)
-    ))
+  def legalMoveDestinations(side: Side) =
+    unoccupiedNeighbours(side.opponent).filter(isLegalMove(side, _))
+
+  lazy val mustPassTurn = legalMoveDestinations(turn).isEmpty && !isFinished
+
+  def successor(location: Location): Board = successor(Occupy(location))
+
+  def successor(move: Move) = move match {
+    case Occupy(loc) =>
+      require(isLegalMove(loc))
+      val flipped = Direction.all.flatMap(flippedLocations(turn.opponent, loc, _)) + loc
+      Board(turn.opponent, Map(
+        turn -> (captures(turn) ++ flipped),
+        turn.opponent -> (captures(turn.opponent) -- flipped)
+      ))
+    case Pass =>
+      require(mustPassTurn)
+      Board(turn.opponent, captures)
   }
 
   // Board is only finished once _both_ players are out of moves
-  lazy val isFinished = legalMoves.isEmpty && legalMoves(turn.opponent).isEmpty
+  lazy val isFinished = legalMoveDestinations(turn).isEmpty && legalMoveDestinations(turn.opponent).isEmpty
 
   def winner =
     (captures(X).size - captures(O).size) match {
