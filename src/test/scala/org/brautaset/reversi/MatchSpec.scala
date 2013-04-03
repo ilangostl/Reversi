@@ -54,7 +54,7 @@ class MatchSpec extends TestKitSpec("MatchSpec") {
       driver.expectMsg(Ongoing(board.successor(Location(4, 5)), p2.ref))
     }
 
-    "eventually cause game over" ignore new Case {
+    "eventually cause game over" in new Case {
 
       val m = Map(X -> p1.ref, O -> p2.ref)
       def iter(moves: List[Location], board: Board, player: TestProbe, opponent: TestProbe): Board =
@@ -78,7 +78,11 @@ class MatchSpec extends TestKitSpec("MatchSpec") {
 
       val b = iter(moves, board, p1, p2)
 
-      driver.expectMsgType[Ongoing]
+      driver.fishForMessage() {
+        case Ongoing(_, _) => false
+        case _ => true
+      }
+
       driver.expectMsg(Finished(b, Some(p1.ref)))
 
     }
