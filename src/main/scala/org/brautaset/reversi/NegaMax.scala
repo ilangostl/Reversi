@@ -14,9 +14,11 @@ object Negamax {
       else
         board.legalMoves.map(m => m -> -iter(board.successor(m), plyLeft - 1)).toMap.maxBy(_._2)._2
 
-    val scores = board.legalMoves.par.map(m => m -> iter(board.successor(m), plyLeft - 1)).toMap
-    // println(scores)
-    scores.maxBy(_._2)._1
+    val moves = board.legalMoves
+    if (moves.tail.isEmpty)
+      moves.head
+    else
+      moves.par.map(m => m -> iter(board.successor(m), plyLeft - 1)).toMap.maxBy(_._2)._1
   }
 
 }
