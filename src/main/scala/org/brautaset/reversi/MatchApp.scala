@@ -9,7 +9,8 @@ object MatchApp extends App {
 
   implicit val system = ActorSystem("match-system")
 
-  val List(p1, p2) = List("Foo", "Bar").map(system.actorOf(Props[Player], _))
+  val p1 = system.actorOf(Props[Player], "Computer")
+  val p2 = system.actorOf(Props[HumanPlayer], "Human")
 
   actor(new Act with ActorLogging {
 

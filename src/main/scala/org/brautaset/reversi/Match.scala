@@ -21,7 +21,9 @@ object Match {
   case class Move(board: Board)
 
   // Message returned from players
-  case class Claim(mv: core.Board.Move)
+  sealed trait PlayerAction
+  case class Claim(mv: core.Board.Move) extends PlayerAction
+  case object Forfeit extends PlayerAction
 
 }
 
@@ -49,6 +51,10 @@ class Match(controller: ActorRef) extends Actor with ActorLogging {
           gameOver(newBoard, newBoard.winner.map(map(_)))
         else
           gameOn(newBoard, opponent, player, map))
+      self.tell(Check, controller)
+
+    case Forfeit if sender == player =>
+      context.become(gameOver(board, Some(opponent)))
       self.tell(Check, controller)
 
   }
