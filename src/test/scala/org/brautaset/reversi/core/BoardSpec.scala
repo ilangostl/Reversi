@@ -71,10 +71,10 @@ class BoardSpec extends WordSpec with MustMatchers {
 
   }
 
-  "isLegalMove" should {
+  "isLegalMoveDestination" should {
 
     "know that [4,5] is a legal move" in {
-      Board().isLegalMove(Location(4, 5)) must be (true)
+      Board().isLegalMoveDestination(Location(4, 5)) must be (true)
     }
   }
 

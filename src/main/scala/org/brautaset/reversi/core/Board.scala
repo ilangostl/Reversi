@@ -18,9 +18,6 @@ object Board {
   def apply(): Board =
     new Board(X, initialCaptures)
 
-  def isOnBoard(location: Location) =
-    location.column >= 0 && location.column < columns && location.row >= 0 && location.row < rows
-
 }
 
 case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
@@ -33,8 +30,11 @@ case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
   private val occupied = captures.flatMap(_._2).toSet
 
   private val unoccupiedNeighbours = captures.map {
-    case (k, v) => k -> (v.flatMap(_.neighbours).filter(isOnBoard(_)) -- occupied)
+    case (k, v) => k -> (v.flatMap(_.neighbours).filter(isLocationOnBoard(_)) -- occupied)
   }
+
+  private def isLocationOnBoard(location: Location) =
+    location.column >= 0 && location.column < columns && location.row >= 0 && location.row < rows
 
   private def flippedLocations(side: Side, loc: Location, d: Direction) = {
     @tailrec
@@ -54,8 +54,8 @@ case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
       Nil
   }
 
-  def isLegalMove(location: Location): Boolean = isLegalMove(turn, location)
-  def isLegalMove(side: Side, location: Location) =
+  def isLegalMoveDestination(location: Location): Boolean = isLegalMoveDestination(turn, location)
+  private def isLegalMoveDestination(side: Side, location: Location) =
     Direction.all.find(!flippedLocations(side.opponent, location, _).isEmpty).isDefined
 
   lazy val legalMoves: Set[Move] = legalMoves(turn)
@@ -67,8 +67,8 @@ case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
     else destinations
   }
 
-  def legalMoveDestinations(side: Side) =
-    unoccupiedNeighbours(side.opponent).filter(isLegalMove(side, _))
+  private def legalMoveDestinations(side: Side) =
+    unoccupiedNeighbours(side.opponent).filter(isLegalMoveDestination(side, _))
 
   lazy val mustPassTurn = legalMoveDestinations(turn).isEmpty && !isFinished
 
@@ -76,7 +76,7 @@ case class Board(turn: Side, captures: Map[Side, Set[Location]]) {
 
   def successor(move: Move) = move match {
     case Occupy(loc) =>
-      require(isLegalMove(loc))
+      require(isLegalMoveDestination(loc))
       val flipped = Direction.all.flatMap(flippedLocations(turn.opponent, loc, _)) + loc
       Board(turn.opponent, Map(
         turn -> (captures(turn) ++ flipped),

@@ -26,7 +26,7 @@ object Othello extends App {
 
       case Move(c, r) =>
         val move = Location(c.toInt, r.toInt)
-        if (board.isLegalMove(move)) {
+        if (board.isLegalMoveDestination(move)) {
           commandLoop(board.successor(Occupy(move)))
         } else {
           println("Illegal move!")

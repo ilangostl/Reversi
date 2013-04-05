@@ -1,5 +1,8 @@
 scalaVersion := "2.10.1"
 
+scalacOptions += "-deprecation"
+
+
 libraryDependencies ++=
     "com.typesafe.akka" %% "akka-actor" % "2.1.0" ::
     "com.typesafe.akka" %% "akka-slf4j" % "2.1.0" ::
