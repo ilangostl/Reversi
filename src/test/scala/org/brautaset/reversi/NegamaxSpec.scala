@@ -23,7 +23,7 @@ class NegamaxSpec extends WordSpec with MustMatchers {
     if (moves.isEmpty) board
     else iter(board.successor(Occupy(moves.head)), moves.tail)
 
-  def nm(board: Board, ply: Int) = Negamax(Fitness(1, 0, 0).fitness)(board, ply)
+  def nm(board: Board, ply: Int) = Negamax(Fitness(1, 0, 0), ply)(board)
 
   "Negamax" should {
 
@@ -51,11 +51,11 @@ class NegamaxSpec extends WordSpec with MustMatchers {
 
     "be able to play a game to the end" in {
 
-      val nm = Negamax(Fitness(1, 1, 1).fitness) _
+      val nm = Negamax(Fitness(1, 1, 1), 2)
 
       def iter(board: Board): Board =
         if (board.isFinished) board
-        else iter(board.successor(nm(board, 2)))
+        else iter(board.successor(nm(board)))
 
       val board = iter(Board())
       board.isFinished must be (true)
