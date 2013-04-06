@@ -12,7 +12,7 @@ case class Negamax(fitness: Fitness, ply: Int) {
       if (board.isFinished || plyLeft <= 0)
         -fitness.fitness(board)
       else
-        board.legalMoves.map(m => m -> -iter(board.successor(m), plyLeft - 1)).toMap.maxBy(_._2)._2
+        board.legalMoves.map(m => -iter(board.successor(m), plyLeft - 1)).max
 
     val moves = board.legalMoves
     if (moves.tail.isEmpty)
