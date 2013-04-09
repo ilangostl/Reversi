@@ -2,6 +2,7 @@ package org.brautaset.search
 
 import org.scalatest.matchers.MustMatchers
 import org.scalatest.WordSpec
+import scala.annotation.tailrec
 
 object AlphabetaSpec {
 
@@ -20,14 +21,35 @@ object AlphabetaSpec {
     def apply(state: State): Move = {
 
       def ab(s: State, a: Double, b: Double, d: Int): Double = {
+  //      println(s.fitness, a, b)
         visited += 1
         if (s.isFinished || d <= 0)
           ffunc(s)
-        else
-          s.legalMoves.map(m => -ab(s.successor(m), -b, -a, d - 1)).max
+        else {
+          @tailrec
+          def iter(mv: Iterable[Move], a0: Double): Double =
+            if (mv.isEmpty) a0
+            else {
+              val sc = -ab(s.successor(mv.head), -b, -a0, d - 1)
+              if (sc >= b) sc
+              else iter(mv.tail, if (sc > a0) sc else a0)
+            }
+          iter(s.legalMoves, a)
+        }
       }
 
-      state.legalMoves.map(m => m -> -ab(state.successor(m), Double.MinValue, Double.MaxValue, depth - 1)).maxBy(_._2)._1
+      def outer(mvs: Iterable[Move], m0: Move, a0: Double): Move = {
+//        println(m0 -> a0)
+        if (mvs.isEmpty) m0
+        else {
+          val sc = -ab(state.successor(mvs.head), -100, -a0, depth-1)
+          println("Sc: " + sc)
+          if (sc > a0) outer(mvs.tail, mvs.head, sc)
+          else outer(mvs.tail, m0, a0)
+        }
+      }
+
+      outer(state.legalMoves, state.legalMoves.head, -100)
     }
 
   }
@@ -41,7 +63,7 @@ class AlphabetaSpec extends WordSpec with MustMatchers {
 
   trait TwoLevel {
     val ll = State(fitness = 7)
-    val lr = State(fitness = 3)
+    val lr = State(fitness = -3)
     val rl = State(fitness = -8)
     val rr = State(fitness = 50)
 
