@@ -15,13 +15,17 @@ object AlphabetaSpec {
   class Alphabeta(depth: Int, ffunc: (State) => Double) {
     require(depth > 0)
 
+    var visited = 0
+
     def apply(state: State): Move = {
 
-      def ab(s: State, a: Double, b: Double, d: Int): Double =
+      def ab(s: State, a: Double, b: Double, d: Int): Double = {
+        visited += 1
         if (s.isFinished || d <= 0)
           ffunc(s)
         else
           s.legalMoves.map(m => -ab(s.successor(m), -b, -a, d - 1)).max
+      }
 
       state.legalMoves.map(m => m -> -ab(state.successor(m), Double.MinValue, Double.MaxValue, depth - 1)).maxBy(_._2)._1
     }
@@ -52,6 +56,11 @@ class AlphabetaSpec extends WordSpec with MustMatchers {
 
     "correctly identify best move" in new TwoLevel {
       ab(origin) must be (Move(4))
+    }
+
+    "prune the last branch" in new TwoLevel {
+      ab(origin)
+      ab.visited must be (5)
     }
 
   }
