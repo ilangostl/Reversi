@@ -16,40 +16,45 @@ object AlphabetaSpec {
   class Alphabeta(depth: Int, ffunc: (State) => Double) {
     require(depth > 0)
 
-    var visited = 0
+    protected def ab(s: State, a: Double, b: Double, d: Int): Double = {
+      if (s.isFinished || d <= 0)
+        ffunc(s)
+      else {
+        @tailrec
+        def iter(mv: Iterable[Move], a0: Double): Double =
+          if (mv.isEmpty) a0
+          else {
+            val sc = -ab(s.successor(mv.head), -b, -a0, d - 1)
+            if (sc >= b) sc
+            else iter(mv.tail, if (sc > a0) sc else a0)
+          }
+        iter(s.legalMoves, a)
+      }
+    }
 
     def apply(state: State): Move = {
 
-      def ab(s: State, a: Double, b: Double, d: Int): Double = {
-  //      println(s.fitness, a, b)
-        visited += 1
-        if (s.isFinished || d <= 0)
-          ffunc(s)
-        else {
-          @tailrec
-          def iter(mv: Iterable[Move], a0: Double): Double =
-            if (mv.isEmpty) a0
-            else {
-              val sc = -ab(s.successor(mv.head), -b, -a0, d - 1)
-              if (sc >= b) sc
-              else iter(mv.tail, if (sc > a0) sc else a0)
-            }
-          iter(s.legalMoves, a)
-        }
-      }
-
-      def outer(mvs: Iterable[Move], m0: Move, a0: Double): Move = {
-//        println(m0 -> a0)
+      def iter(mvs: Iterable[Move], m0: Move, a0: Double): Move = {
         if (mvs.isEmpty) m0
         else {
           val sc = -ab(state.successor(mvs.head), -100, -a0, depth-1)
-          println("Sc: " + sc)
-          if (sc > a0) outer(mvs.tail, mvs.head, sc)
-          else outer(mvs.tail, m0, a0)
+          if (sc > a0) iter(mvs.tail, mvs.head, sc)
+          else iter(mvs.tail, m0, a0)
         }
       }
 
-      outer(state.legalMoves, state.legalMoves.head, -100)
+      iter(state.legalMoves, state.legalMoves.head, -100)
+    }
+
+  }
+
+  class VisitedAlphabeta(depth: Int, ffunc: (State) => Double) extends Alphabeta(depth, ffunc) {
+
+    var visited = 0
+
+    override def ab(s: State, a: Double, b: Double, d: Int): Double = {
+      visited += 1
+      super.ab(s, a, b, d)
     }
 
   }
@@ -71,7 +76,7 @@ class AlphabetaSpec extends WordSpec with MustMatchers {
     val right = State(Map(Move(2) -> rl, Move(3) -> rr))
     val origin = State(Map(Move(4) -> left, Move(5) -> right))
 
-    val ab = new Alphabeta(2, _.fitness)
+    val ab = new VisitedAlphabeta(2, _.fitness)
   }
 
   "apply" should {
