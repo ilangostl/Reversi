@@ -66,31 +66,88 @@ class AlphabetaSpec extends WordSpec with MustMatchers {
 
   import AlphabetaSpec._
 
-  trait TwoLevel {
-    val ll = State(fitness = 7)
-    val lr = State(fitness = -3)
-    val rl = State(fitness = -8)
-    val rr = State(fitness = 50)
+  trait Left {
+    val lll = State(fitness = 7)
+    val llr = State(fitness = -3)
+    val lrl = State(fitness = -8)
+    val lrr = State(fitness = 50)
 
-    val left = State(Map(Move(0) -> ll, Move(1) -> lr))
-    val right = State(Map(Move(2) -> rl, Move(3) -> rr))
-    val origin = State(Map(Move(4) -> left, Move(5) -> right))
+    val ll = State(Map(Move(0) -> lll, Move(1) -> llr))
+    val lr = State(Map(Move(2) -> lrl, Move(3) -> lrr))
 
-    val ab = new VisitedAlphabeta(2, _.fitness)
+    val left =  State(Map(Move(4) -> ll, Move(5) -> lr))
   }
 
-  "apply" should {
+  trait Right {
 
-    "correctly identify best move" in new TwoLevel {
-      ab(origin) must be (Move(4))
+    val rll = State(fitness = 10)
+    val rlr = State(fitness = -1)
+    val rrl = State(fitness = 2)
+    val rrr = State(fitness = 100)
+
+    val rl = State(Map(Move(6) -> rll, Move(7) -> rlr))
+    val rr = State(Map(Move(8) -> rrl, Move(9) -> rrr))
+
+    val right = State(Map(Move(10) -> rl, Move(11) -> rr))
+  }
+
+  trait Both extends Left with Right {
+    val origin = State(Map(Move(12) -> left, Move(13) -> right))
+  }
+
+  trait AB2 { val searcher = new VisitedAlphabeta(2, _.fitness) }
+  trait AB9 { val searcher = new VisitedAlphabeta(9, _.fitness) }
+
+  "search left to depth 2" should {
+
+    "correctly identify best move" in new AB2 with Left {
+      searcher(left) must be (Move(4))
     }
 
-    "prune the last branch" in new TwoLevel {
-      ab(origin)
-      ab.visited must be (5)
+    "prune the last branch" in new AB2 with Left {
+      searcher(left)
+      searcher.visited must be (5)
     }
 
   }
 
+  "search left to depth X" should {
+
+    "correctly identify best move" in new AB9 with Left {
+      searcher(left) must be (Move(4))
+    }
+
+    "prune the last branch" in new AB9 with Left {
+      searcher(left)
+      searcher.visited must be (5)
+    }
+
+  }
+
+  "search right to depth 2" should {
+
+    "correctly identify best move" in new AB2 with Right {
+      searcher(right) must be (Move(11))
+    }
+
+    "fail to prune anything" in new AB2 with Right {
+      searcher(right)
+      searcher.visited must be (6)
+    }
+
+  }
+
+  "search both to depth 3" should {
+
+    "correctly identify best move" in new AB9 with Both {
+      searcher(origin) must be (Move(12))
+    }
+
+    "prune some branches" in new AB9 with Both {
+      searcher(origin)
+      searcher.visited must be (10)
+    }
+
+  }
 
 }
