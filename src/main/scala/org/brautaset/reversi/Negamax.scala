@@ -10,7 +10,7 @@ case class Negamax(fitness: Fitness, ply: Int) {
 
     def iter(board: Board, plyLeft: Int): Double =
       if (board.isFinished || plyLeft <= 0)
-        fitness.fitness(board)
+        fitness(board)
       else
         board.legalMoves.map(m => -iter(board.successor(m), plyLeft - 1)).max
 

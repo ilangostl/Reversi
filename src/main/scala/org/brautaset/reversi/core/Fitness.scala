@@ -28,7 +28,7 @@ object Fitness {
 case class Fitness(capWgt: Double, mobWgt: Double, corWgt: Double) {
   import Fitness._
 
-  def fitness(board: Board) =
+  def apply(board: Board) =
     if (board.isFinished) finish(board)
     else capWgt * capture(board) + mobWgt * mobility(board) + corWgt * corner(board)
 
