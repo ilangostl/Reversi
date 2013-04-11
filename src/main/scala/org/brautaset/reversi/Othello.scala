@@ -11,7 +11,7 @@ object Othello extends App {
 
   val fitness = Fitness(1, 1, 1)
 
-  val negamax = Negamax(fitness, 2)
+  val searcher = Alphabeta(fitness, 4)
 
   commandLoop(Board())
 
@@ -45,7 +45,7 @@ object Othello extends App {
     if (board.isFinished)
       println("GAME OVER")
     else
-      auto(board.successor(negamax(board)))
+      auto(board.successor(searcher(board)))
   }
 
 }
