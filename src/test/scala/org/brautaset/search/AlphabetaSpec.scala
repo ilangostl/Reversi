@@ -44,7 +44,7 @@ object AlphabetaSpec {
       }
 
       val moves = state.legalMoves
-      if (moves.size == 1) moves.head
+      if (moves.tail.isEmpty) moves.head
       else iter(moves, moves.head, -100)
     }
 
